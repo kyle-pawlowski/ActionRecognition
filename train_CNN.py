@@ -37,14 +37,14 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
             tensorboard = keras.callbacks.TensorBoard(log_dir='./logs/try', histogram_freq=0, write_graph=True, write_images=True)
             model.fit_generator(
                 train_generator,
-                steps_per_epoch=200,
-                epochs=2000,
+                steps_per_epoch=20,
+                epochs=10,
                 validation_data=test_generator,
                 validation_steps=100,
                 verbose=2,
-                callbacks=[checkpointer, tensorboard, earlystopping]
+                callbacks=[checkpointer,earlystopping]
             )
-            data_dir = '/home/changan/ActionRecognition/data'
+            data_dir = '/home/kyle/Documents/Research/ActionRecognition/data'
             list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
             UCF_dir = os.path.join(data_dir, 'UCF-101')
             regenerate_data(data_dir, list_dir, UCF_dir)
@@ -54,9 +54,9 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
 
 
 if __name__ == '__main__':
-    data_dir = '/home/changan/ActionRecognition/data'
+    data_dir = '/home/kyle/Documents/Research/ActionRecognition/data'
     list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
-    weights_dir = '/home/changan/ActionRecognition/models'
+    weights_dir = '/home/kyle/Documents/Research/ActionRecognition/models'
 
 
     # fine tune resnet50
