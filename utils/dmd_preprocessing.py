@@ -1,9 +1,11 @@
 import numpy as np
 from pydmd import DMD
 import os
-from UCF_preprocessing import 
+from collections import OrderedDict
+import shutil
+import warnings
 
-def dmd_prep():
+def dmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
     train_dir = os.path.join(src_dir, 'train')
     test_dir = os.path.join(src_dir, 'test')
 
@@ -48,37 +50,42 @@ def dmd_prep():
                 file_dir = os.path.join(class_dir, filename)
                 frames = np.load(file_dir)
                 # note: store the final processed data with type of float16 to save storage
-                processed_data = compute_dmd(frames, mean_sub).astype(np.float16)
+                processed_data = _stack_dmd(frames, window, num_modes).astype(np.float16)
                 dest_file_dir = os.path.join(dest_class_dir, filename)
                 np.save(dest_file_dir, processed_data)
             # print('No.{} class {} finished, data saved in {}'.format(index, class_name, dest_class_dir))
  
 
-def stack_dmd(frames, window, num_modes):
+def _stack_dmd(frames, window, num_modes):
     if frames.dtype != np.float32:
         frames = frames.astype(np.float32)
         warnings.warn('Warning! The data type has been changed to np.float32 for graylevel conversion...')
-    frame_shape = frames.shape[1:-1]  # e.g. frames.shape is (10, 216, 216, 3)
+    frame_shape = frames.shape[1:-1]  # e.g. frames.shape is (10, 216, 216, 3)i
+    frame_vec_size = frames.shape[1] * frames.shape[2] * frames.shape[3]
     num_sequences = frames.shape[0]
-    output_shape = frame_shape + (2 * (num_sequences - 1),)  # stacked_optical_flow.shape is (216, 216, 18)
-    modes = np.ndarray(shape=output_shape)
+    output_shape = (frame_vec_size,num_modes,num_sequences-window)  # dmd_modes shape is (139,968, num_modes, num_windows)
+    modes = None
 
     for i in range(num_sequences - window):
-        
-        flow = _calc_optical_flow(prev_gray, next_gray)
-        flows[:, :, 2 * i:2 * i + 2] = flow
+        selection = frames[i:i+window]
+        mode = _compute_dmd(selection, num_modes)
+        if modes is None: 
+            num_modes = mode.shape[1]
+            output_shape = (frame_vec_size, num_modes, num_sequences-window)
+            modes = np.ndarray(shape=output_shape)
+        modes[:, :, i] = mode
+    return modes
 
-def compute_dmd(frames, num_modes):
+def _compute_dmd(frames, num_modes):
     vec_frames = np.reshape(frames, (frames.shape[0], frames.shape[1]*frames.shape[2]*frames.shape[3]))
     dmd = DMD(svd_rank=num_modes)
     dmd.fit(vec_frames.T)
-    modes = np.reshape(dmd.modes.T.real,(frames[1],frames[2],frames[3]))
+    modes = dmd.modes.real
+    return modes
  
 if __name__ == '__main__':
     sequence_length = 10 
     image_size = (216,216,3)
-    data_dir = '/home/kyle/Documents/Research/ActionRecognition/data'
-    list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
-    UCF_dir = os.path.join(data_dir, 'UCF-101')
-    frames_dir = os.path.join(data_dir, 'frames/mean.npy')
-    
+    src_dir = '/home/kyle/Documents/Research/ActionRecognition/data/UCF-Preprocessed-OF'
+    dest_dir = '/home/kyle/Documents/Research/ActionRecognition/data/DMD_data'
+    dmd_prep(src_dir, dest_dir, 5, 6, overwrite=True) 
