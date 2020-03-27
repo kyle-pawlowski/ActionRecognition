@@ -37,7 +37,7 @@ def dmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
     dir_mapping = OrderedDict(
         [(train_dir, dest_train_dir), (test_dir, dest_test_dir)])  # the mapping between source and dest
 
-    print('Start computing optical flows ...')
+    print('Start computing dmds ...')
     for dir, dest_dir in dir_mapping.items():
         print('Processing data in {}'.format(dir))
         for index, class_name in enumerate(os.listdir(dir)):  # run through every class of video
@@ -63,15 +63,15 @@ def _stack_dmd(frames, window, num_modes):
     frame_shape = frames.shape[1:-1]  # e.g. frames.shape is (10, 216, 216, 3)i
     frame_vec_size = frames.shape[1] * frames.shape[2] * frames.shape[3]
     num_sequences = frames.shape[0]
-    output_shape = (frame_vec_size,num_modes,num_sequences-window)  # dmd_modes shape is (139,968, num_modes, num_windows)
+    output_shape = (frame_vec_size,num_modes,num_sequences-window+1)  # dmd_modes shape is (139,968, num_modes, num_windows)
     modes = None
 
-    for i in range(num_sequences - window):
+    for i in range(num_sequences - window+1):
         selection = frames[i:i+window]
         mode = _compute_dmd(selection, num_modes)
         if modes is None: 
             num_modes = mode.shape[1]
-            output_shape = (frame_vec_size, num_modes, num_sequences-window)
+            output_shape = (frame_vec_size, num_modes, num_sequences-window+1)
             modes = np.ndarray(shape=output_shape)
         modes[:, :, i] = mode
     return modes
