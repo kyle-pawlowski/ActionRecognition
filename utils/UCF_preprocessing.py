@@ -231,8 +231,8 @@ if __name__ == '__main__':
     '''
     sequence_length = 10
     image_size = (216, 216, 3)
-
-    data_dir = 'data'
+    cwd = os.getcwd()
+    data_dir = os.path.join(cwd,'data')
     list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
     UCF_dir = os.path.join(data_dir, 'UCF-101')
     frames_dir = os.path.join(data_dir, 'frames/mean.npy')
