@@ -218,8 +218,8 @@ def regenerate_data(data_dir, list_dir, UCF_dir):
                   mean_subtraction=False, horizontal_flip=False, random_crop=True, consistent=True, continuous_seq=True)
 
     # compute optical flow data
-    src_dir = '../data/UCF-Preprocessed-OF'
-    dest_dir = '../data/OF_data'
+    src_dir = 'data/UCF-Preprocessed-OF'
+    dest_dir = 'data/OF_data'
     optical_flow_prep(src_dir, dest_dir, mean_sub=True, overwrite=True)
 
     elapsed_time = time.time() - start_time
@@ -232,7 +232,7 @@ if __name__ == '__main__':
     sequence_length = 10
     image_size = (216, 216, 3)
 
-    data_dir = '../data'
+    data_dir = 'data'
     list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
     UCF_dir = os.path.join(data_dir, 'UCF-101')
     frames_dir = os.path.join(data_dir, 'frames/mean.npy')
