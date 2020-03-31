@@ -77,4 +77,4 @@ if __name__ == '__main__':
     input_shape = (648,216,4)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     model = temporal_CNN(input_shape, N_CLASSES, weights_dir, include_top=True)
-    fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=True)
+    fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False)
