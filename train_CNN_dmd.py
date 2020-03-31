@@ -17,8 +17,8 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
             train_generator = sequence_generator(train_data, BatchSize, input_shape, N_CLASSES)
             test_generator = sequence_generator(test_data, BatchSize, input_shape, N_CLASSES)
         else:
-            train_generator = image_from_sequence_generator(train_data, BatchSize, input_shape, N_CLASSES)
-            test_generator = image_from_sequence_generator(test_data, BatchSize, input_shape, N_CLASSES)
+            train_generator = image_from_sequence_generator(train_data, BatchSize, (6,)+input_shape, N_CLASSES)
+            test_generator = image_from_sequence_generator(test_data, BatchSize, (6,)+input_shape, N_CLASSES)
 
         # frames_dir = '/home/changan/ActionRecognition/data/flow_images'
         # train_generator = image_generator(train_data, frames_dir, BatchSize, input_shape, N_CLASSES, mean_sub=False,
