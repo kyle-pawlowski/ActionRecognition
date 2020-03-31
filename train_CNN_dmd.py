@@ -74,7 +74,7 @@ if __name__ == '__main__':
     # train CNN using dmd as input
     weights_dir = os.path.join(weights_dir, 'dmd_cnn_42.h5')
     video_dir = os.path.join(data_dir, 'DMD_data')
-    input_shape = (46656,3,4)
+    input_shape = (648,216,4)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     model = temporal_CNN(input_shape, N_CLASSES, weights_dir, include_top=True)
     fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=True)
