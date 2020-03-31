@@ -7,7 +7,7 @@ from keras.optimizers import SGD
 from utils.UCF_preprocessing import regenerate_data
 
 N_CLASSES = 101
-BatchSize = 32
+BatchSize = 6 
 
 
 def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False):
