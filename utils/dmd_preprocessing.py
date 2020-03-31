@@ -63,7 +63,7 @@ def _stack_dmd(frames, window, num_modes):
     frame_shape = frames.shape[1:-1]  # e.g. frames.shape is (10, 216, 216, 3)i
     frame_vec_size = frames.shape[1] * frames.shape[2] * frames.shape[3]
     num_sequences = frames.shape[0]
-    output_shape = (frame_vec_size,num_modes,num_sequences-window+1)  # dmd_modes shape is (139,968, num_modes, num_windows)
+    output_shape = (num_sequences-window+1,frames.shape[1]*frames.shape[3],frames.shape[2],num_modes)  # dmd_modes shape is (139,968, num_modes, num_windows)
     modes = None
 
     for i in range(num_sequences - window+1):
@@ -71,9 +71,10 @@ def _stack_dmd(frames, window, num_modes):
         mode = _compute_dmd(selection, num_modes)
         if modes is None: 
             num_modes = mode.shape[1]
-            output_shape = (frame_vec_size, num_modes, num_sequences-window+1)
+            output_shape = (num_sequences-window+1,frames.shape[1]*frames.shape[3],frames.shape[2],num_modes)
             modes = np.ndarray(shape=output_shape)
-        modes[:, :, i] = mode
+        mode = np.reshape(mode.T,(frames.shape[1]*frames.shape[3],frames.shape[2],num_modes))
+        modes[i] = mode
     return modes
 
 def _compute_dmd(frames, num_modes):
@@ -86,6 +87,7 @@ def _compute_dmd(frames, num_modes):
 if __name__ == '__main__':
     sequence_length = 10 
     image_size = (216,216,3)
-    src_dir = '/home/kyle/Documents/Research/ActionRecognition/data/UCF-Preprocessed-OF'
-    dest_dir = '/home/kyle/Documents/Research/ActionRecognition/data/DMD_data'
+    cwd = os.getcwd()
+    src_dir = os.path.join(cwd,'data/UCF-Preprocessed-OF')
+    dest_dir = os.path.join(cwd,'data/DMD_data')
     dmd_prep(src_dir, dest_dir, 5, 6, overwrite=True) 

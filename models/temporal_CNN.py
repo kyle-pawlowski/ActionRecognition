@@ -24,12 +24,12 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True):
     x = Convolution2D(96, kernel_size=(7, 7), strides=(2, 2), padding='same', name='tmp_conv1')(optical_flow_input)
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
-    x = MaxPooling2D(pool_size=(2, 2))(x)
+    x = MaxPooling2D(pool_size=(2, 2),dim_ordering="tf")(x)
 
     x = Convolution2D(256, kernel_size=(5, 5), strides=(2, 2), padding='same', name='tmp_conv2')(x)
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
-    x = MaxPooling2D(pool_size=(2, 2))(x)
+    x = MaxPooling2D(pool_size=(2, 2),dim_ordering="tf")(x)
 
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv3')(x)
     x = BatchNormalization(axis=3)(x)
@@ -42,7 +42,7 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True):
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv5')(x)
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
-    x = MaxPooling2D(pool_size=(2, 2))(x)
+    x = MaxPooling2D(pool_size=(2, 2),dim_ordering="tf")(x)
 
     x = Flatten()(x)
     x = Dense(4096, activation='relu', name='tmp_fc6')(x)
