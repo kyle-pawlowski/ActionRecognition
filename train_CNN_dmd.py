@@ -40,7 +40,7 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
                 steps_per_epoch=20,
                 epochs=10,
                 validation_data=test_generator,
-                validation_steps=100,
+                validation_steps=10,
                 verbose=2,
                 callbacks=[checkpointer,earlystopping]
             )
