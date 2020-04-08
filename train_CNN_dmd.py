@@ -5,20 +5,32 @@ from models.finetuned_resnet import finetuned_resnet
 from models.temporal_CNN import temporal_CNN
 from keras.optimizers import SGD
 from utils.UCF_preprocessing import regenerate_data
+import threading
 
 N_CLASSES = 101
 BatchSize = 6 
 
+class LockedIterator(object):
+    def __init__(self, it):
+        self.lock = threading.Lock()
+        self.it = it.__iter__()
+    def __iter__(self): return self
+    def __next__(self):
+        self.lock.acquire()
+        try:
+            return self.it.__next__()
+        finally:
+            self.lock.release()
 
 def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False):
     try:
         # using sequence or image_from_sequnece generator
         if optical_flow:
-            train_generator = sequence_generator(train_data, BatchSize, input_shape, N_CLASSES)
-            test_generator = sequence_generator(test_data, BatchSize, input_shape, N_CLASSES)
+            train_generator = LockedIterator(sequence_generator(train_data, BatchSize, input_shape, N_CLASSES))
+            test_generator = LockedIterator(sequence_generator(test_data, BatchSize, input_shape, N_CLASSES))
         else:
-            train_generator = image_from_sequence_generator(train_data, BatchSize, (6,)+input_shape, N_CLASSES)
-            test_generator = image_from_sequence_generator(test_data, BatchSize, (6,)+input_shape, N_CLASSES)
+            train_generator = LockedIterator(image_from_sequence_generator(train_data, BatchSize, (6,)+input_shape, N_CLASSES))
+            test_generator = LockedIterator(image_from_sequence_generator(test_data, BatchSize, (6,)+input_shape, N_CLASSES))
 
         # frames_dir = '/home/changan/ActionRecognition/data/flow_images'
         # train_generator = image_generator(train_data, frames_dir, BatchSize, input_shape, N_CLASSES, mean_sub=False,
@@ -31,24 +43,24 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
         print(model.summary())
 
         print('Start fitting model')
-        while True:
+        for i in range(1):
             checkpointer = keras.callbacks.ModelCheckpoint(weights_dir, save_best_only=True, save_weights_only=True)
             earlystopping = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.001, patience=20, verbose=2, mode='auto')
             tensorboard = keras.callbacks.TensorBoard(log_dir='./logs/try', histogram_freq=0, write_graph=True, write_images=True)
             model.fit_generator(
                 train_generator,
-                steps_per_epoch=20,
-                epochs=10,
+                steps_per_epoch=200,
+                epochs=1000,
                 validation_data=test_generator,
-                validation_steps=10,
+                validation_steps=100,
                 verbose=2,
                 callbacks=[checkpointer,earlystopping]
             )
-            cwd = os.getcwd()
+            '''cwd = os.getcwd()
             data_dir = os.path.join(cwd,'data')
             list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
             UCF_dir = os.path.join(data_dir, 'UCF-101')
-            regenerate_data(data_dir, list_dir, UCF_dir)
+            regenerate_data(data_dir, list_dir, UCF_dir)'''
 
     except KeyboardInterrupt:
         print('Training is interrupted')

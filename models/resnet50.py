@@ -8,7 +8,7 @@
 Adapted from code contributed by BigMoyan.
 '''
 from __future__ import print_function
-
+import os
 import numpy as np
 import warnings
 
@@ -35,10 +35,10 @@ from keras_applications.imagenet_utils import _obtain_input_shape
 from keras.engine.topology import get_source_inputs
 
 cwd = os.getcwd()
-#WEIGHTS_PATH = 'https://github.com/fchollet/deep-learning-models/releases/download/v0.2/resnet50_weights_tf_dim_ordering_tf_kernels.h5'
-#WEIGHTS_PATH_NO_TOP = 'https://github.com/fchollet/deep-learning-models/releases/download/v0.2/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5'
-WEIGHTS_PATH = os.path.join(cwd, 'models/resnet50_weights_tf_dim_ordering_tf_kernels.h5')
-WEIGHTS_PATH_NO_TOP = os.path.join(cwd,'models/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5')
+WEIGHTS_PATH = 'https://github.com/fchollet/deep-learning-models/releases/download/v0.2/resnet50_weights_tf_dim_ordering_tf_kernels.h5'
+WEIGHTS_PATH_NO_TOP = 'https://github.com/fchollet/deep-learning-models/releases/download/v0.2/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5'
+WEIGHTS_LOCAL_PATH = os.path.join(cwd, 'models/resnet50_weights_tf_dim_ordering_tf_kernels.h5')
+WEIGHTS_LOCAL_PATH_NO_TOP = os.path.join(cwd,'models/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5')
 
 def identity_block(input_tensor, kernel_size, filters, stage, block):
     """The identity block is the block that has no conv layer at shortcut.
@@ -253,12 +253,18 @@ def ResNet50(include_top=True, weights='imagenet',
     # load weights
     if weights == 'imagenet':
         if include_top:
-            weights_path = get_file('resnet50_weights_tf_dim_ordering_tf_kernels.h5',
+            if os.path.exists(WEIGHTS_LOCAL_PATH):
+                weights_path = WEIGHTS_LOCAL_PATH
+            else:
+                weights_path = get_file('resnet50_weights_tf_dim_ordering_tf_kernels.h5',
                                     WEIGHTS_PATH,
                                     cache_subdir='models',
                                     md5_hash='a7b3fe01876f51b976af0dea6bc144eb')
         else:
-            weights_path = get_file('resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5',
+            if os.path.exists(WEIGHTS_LOCAL_PATH_NO_TOP):
+                weights_path = WEIGHTS_LOCAL_PATH_NO_TOP
+            else:
+                weights_path = get_file('resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5',
                                     WEIGHTS_PATH_NO_TOP,
                                     cache_subdir='models',
                                     md5_hash='a268eb855778b3df3c7506639542a6af')
