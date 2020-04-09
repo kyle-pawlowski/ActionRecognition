@@ -117,7 +117,9 @@ def image_generator(listtxt_dir, frames_dir, batch_size, img_size, num_classes, 
             if mean is not None:
                 frame -= mean
             if normalization:
-                frame /= 255
+                if max(frame) != 0:
+                    frame /= max(frame)
+                    frame *= 255
 
             batch_x[i] = frame
             batch_y[i, int(clip_index) - 1] = 1
