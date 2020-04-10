@@ -8,6 +8,34 @@ This project aims to accurately recognize user's action in a series of video fra
     
 - Perfomance of different models are compared and analysis of experiment results are provided
 
+## Environment Set-up
+
+These are instructions for how to get your computer ready to run this code.
+
+1. Download [Anaconda](https://anaconda.com/distribution). This is a Python package management and virtual environment software. Similar softwares such as PIP (Package Installer for Python) and virtualenv will work too.
+
+2. Create a new environment with the required libraries. The libraries included with Anaconda which are required for this code are numpy, pandas, py-opencv, scipy, matplotlib, tensorflow, keras, pillow, sphinx.
+```
+conda create --name dmd_env python=3.7 numpy, pandas, py-opencv, scipy, matplotlib, tensorflow, keras, pillow, sphinx
+```
+
+3. To start using this environment, it must be activated.
+```
+source activate dmd_env
+```
+
+4. Now the PyDMD library must be installed separately using pip
+```
+python3 -m pip install pydmd
+```
+
+5. Install the UCF-101 dataset by clicking [here](https://www.crcv.ucf.edu/data/UCF101/UCF101.rar). Once the download is finished, move the "UCF-101" folder to the data folder. Watch out because this is 6GB worth of videos. It shouldn't be added to the repository, so the entire data folder is included in the gitignore.
+
+6. Install the labels for the dataset by clicking [here](https://www.crcvucf.edu/data/UCF101/UCF101TrainTestSplits-RecognitionTask.zip). Once the download is finished, move the "ucfTrainTestlist" folder to the data directory.
+
+7. Rename one of the testlist files in the "ucfTrainTestlist" folder to be "testlist.txt" without a number. Rename one of the trainlist files to be "trainlist.txt.
+
+8. Now the files in this repository can be run using `python3 scriptname.py`. Just make sure to run everything from the main directory since that is where the file paths assume the current working directory is. To run a script in a folder, use the package name: `python -m packagename.scriptname`.
 
 ## File Structure of the Repo
 
