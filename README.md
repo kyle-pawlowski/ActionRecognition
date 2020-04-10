@@ -24,14 +24,14 @@ conda create --name dmd_env python=3.7 numpy, pandas, py-opencv, scipy, matplotl
 source activate dmd_env
 ```
 
-4. Now the PyDMD library must be installed separately using pip
-```
+4. Now the PyDMD library must be installed separately using pip.
+``` 
 python3 -m pip install pydmd
 ```
 
 5. Install the UCF-101 dataset by clicking [here](https://www.crcv.ucf.edu/data/UCF101/UCF101.rar). Once the download is finished, move the "UCF-101" folder to the data folder. Watch out because this is 6GB worth of videos. It shouldn't be added to the repository, so the entire data folder is included in the gitignore.
 
-6. Install the labels for the dataset by clicking [here](https://www.crcvucf.edu/data/UCF101/UCF101TrainTestSplits-RecognitionTask.zip). Once the download is finished, move the "ucfTrainTestlist" folder to the data directory.
+6. Install the labels for the dataset by clicking [here](https://www.crcv.ucf.edu/data/UCF101/UCF101TrainTestSplits-RecognitionTask.zip). Once the download is finished, move the "ucfTrainTestlist" folder to the data directory.
 
 7. Rename one of the testlist files in the "ucfTrainTestlist" folder to be "testlist.txt" without a number. Rename one of the trainlist files to be "trainlist.txt.
 
