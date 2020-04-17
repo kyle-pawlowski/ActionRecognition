@@ -42,14 +42,14 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True):
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv5')(x)
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
-    x = MaxPooling2D(pool_size=(2, 2))(x)
+    x = MaxPooling2D(pool_size=(2, 2),dim_ordering="tf")(x)
 
     x = Flatten()(x)
     x = Dense(4096, activation='relu', name='tmp_fc6')(x)
-    x = Dropout(0.9)(x)
+    x = Dropout(0.5)(x)
 
     x = Dense(2048, activation='relu', name='tmp_fc7')(x)
-    x = Dropout(0.9)(x)
+    x = Dropout(0.5)(x)
 
     if include_top:
         x = Dense(classes, activation='softmax', name='tmp_fc101')(x)

@@ -215,7 +215,7 @@ def regenerate_data(data_dir, list_dir, UCF_dir):
     dest_dir = os.path.join(data_dir, 'UCF-Preprocessed-OF')
     # generate sequence for optical flow
     preprocessing(list_dir, UCF_dir, dest_dir, sequence_length, image_size, overwrite=True, normalization=False,
-                  mean_subtraction=False, horizontal_flip=False, random_crop=True, consistent=True, continuous_seq=True)
+                  mean_subtraction=False, horizontal_flip=False, random_crop=False, consistent=True, continuous_seq=True)
 
     # compute optical flow data
     src_dir = os.path.join(data_dir,'UCF-Preprocessed-OF')
