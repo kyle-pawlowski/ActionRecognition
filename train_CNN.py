@@ -43,7 +43,7 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
         print(model.summary())
 
         print('Start fitting model')
-        for i in range(1):
+        for i in range(10):
             checkpointer = keras.callbacks.ModelCheckpoint(weights_dir, save_best_only=True, save_weights_only=True)
             earlystopping = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.001, patience=20, verbose=2, mode='auto')
             tensorboard = keras.callbacks.TensorBoard(log_dir='./logs/try', histogram_freq=0, write_graph=True, write_images=True)
@@ -60,7 +60,7 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
             data_dir = os.path.join(cwd,'data')
             list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
             UCF_dir = os.path.join(data_dir, 'UCF-101')
-        #    regenerate_data(data_dir, list_dir, UCF_dir)
+            #regenerate_data(data_dir, list_dir, UCF_dir)
 
     except KeyboardInterrupt:
         print('Training is interrupted')
