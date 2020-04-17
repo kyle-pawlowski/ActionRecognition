@@ -5,7 +5,7 @@ import shutil
 import scipy.misc
 import time
 from .OF_utils import optical_flow_prep
-
+from PIL import Image
 
 def combine_list_txt(list_dir):
     testlisttxt = 'testlist.txt'
@@ -28,7 +28,7 @@ def combine_list_txt(list_dir):
 
 def process_frame(frame, img_size, x, y, mean=None, normalization=True, flip=True, random_crop=True):
     if not random_crop:
-        frame = scipy.misc.imresize(frame, img_size)
+        frame = np.array(Image.fromarray(frame).resize(img_size[:2]))
     else:
         frame = frame[x:x+img_size[0], y:y+img_size[1], :]
     # flip horizontally
