@@ -5,7 +5,7 @@ import shutil
 import scipy.misc
 import time
 from .OF_utils import optical_flow_prep
-
+from PIL import Image
 
 def combine_list_txt(list_dir):
     testlisttxt = 'testlist.txt'
@@ -28,7 +28,7 @@ def combine_list_txt(list_dir):
 
 def process_frame(frame, img_size, x, y, mean=None, normalization=True, flip=True, random_crop=True):
     if not random_crop:
-        frame = scipy.misc.imresize(frame, img_size)
+        frame = np.array(Image.fromarray(frame).resize(img_size[:2]))
     else:
         frame = frame[x:x+img_size[0], y:y+img_size[1], :]
     # flip horizontally
@@ -215,7 +215,7 @@ def regenerate_data(data_dir, list_dir, UCF_dir):
     dest_dir = os.path.join(data_dir, 'UCF-Preprocessed-OF')
     # generate sequence for optical flow
     preprocessing(list_dir, UCF_dir, dest_dir, sequence_length, image_size, overwrite=True, normalization=False,
-                  mean_subtraction=False, horizontal_flip=False, random_crop=True, consistent=True, continuous_seq=True)
+                  mean_subtraction=False, horizontal_flip=False, random_crop=False, consistent=True, continuous_seq=True)
 
     # compute optical flow data
     src_dir = os.path.join(data_dir,'UCF-Preprocessed-OF')
