@@ -2,7 +2,7 @@ import os
 import keras.callbacks
 from utils.UCF_utils import image_from_sequence_generator, sequence_generator, get_data_list
 from models.finetuned_resnet import finetuned_resnet
-from models.temporal_CNN import temporal_CNN
+from models.temporal_CNN import dmd_CNN
 from keras.optimizers import SGD
 from utils.UCF_preprocessing import regenerate_data
 import threading
@@ -84,9 +84,10 @@ if __name__ == '__main__':
     #fit_model(model, train_data, test_data, weights_dir, input_shape)
     
     # train CNN using dmd as input
-    weights_dir = os.path.join(weights_dir, 'dmd_cnn_42.h5')
+    dmd_weights_dir = os.path.join(weights_dir, 'dmd_cnn_42.h5')
+    of_weights_dir = os.path.join(weights_dir, 'temporal_cnn_42.h5')
     video_dir = os.path.join(data_dir, 'DMD_data')
-    input_shape = (648,216,4)
+    input_shape = (216,216,4)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
-    model = temporal_CNN(input_shape, N_CLASSES, weights_dir, include_top=True)
-    fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False)
+    model = dmd_CNN(input_shape, N_CLASSES, dmd_weights_dir, include_top=True)
+    fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=False)

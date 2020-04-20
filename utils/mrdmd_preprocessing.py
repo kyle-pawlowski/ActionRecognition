@@ -4,6 +4,7 @@ import os
 from collections import OrderedDict
 import shutil
 import warnings
+import cv2
 
 def dmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
     train_dir = os.path.join(src_dir, 'train')
@@ -56,29 +57,43 @@ def dmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
             # print('No.{} class {} finished, data saved in {}'.format(index, class_name, dest_class_dir))
  
 
-def _stack_dmd(frames, window, num_modes):
+def _stack_dmd(frames, window, num_modes, grey=True):
     if frames.dtype != np.float32:
         frames = frames.astype(np.float32)
         warnings.warn('Warning! The data type has been changed to np.float32 for graylevel conversion...')
     frame_shape = frames.shape[1:-1]  # e.g. frames.shape is (10, 216, 216, 3)i
     frame_vec_size = frames.shape[1] * frames.shape[2] * frames.shape[3]
+    if grey:
+        frame_vec_size = frames.shape[1]*frames.shape[2]
     num_sequences = frames.shape[0]
     output_shape = (num_sequences-window+1,frames.shape[1]*frames.shape[3],frames.shape[2],num_modes)  # dmd_modes shape is (139,968, num_modes, num_windows)
+    if grey:
+        output_shape = (num_sequences-window+1, frames.shape[1], frames.shape[2],num_modes)
     modes = None
 
     for i in range(num_sequences - window+1):
         selection = frames[i:i+window]
+        if grey:
+            selection = np.array([cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY) for frame in selection])
         mode = _compute_dmd(selection)
         if modes is None: 
             num_modes = mode.shape[1]
             output_shape = (num_sequences-window+1,frames.shape[1]*frames.shape[3],frames.shape[2],num_modes)
+            if grey:
+                output_shape = (num_sequences-window+1, frames.shape[1], frames.shape[2],num_modes)
             modes = np.ndarray(shape=output_shape)
-        mode = np.reshape(mode.T,(frames.shape[1]*frames.shape[3],frames.shape[2],num_modes))
+        if not grey:
+            mode = np.reshape(mode.T,(frames.shape[1]*frames.shape[3],frames.shape[2],num_modes))
+        else:
+            mode = np.reshape(mode.T,(frames.shape[1],frames.shape[2],num_modes))
         modes[i] = mode
     return modes
 
 def _compute_dmd(frames):
-    vec_frames = np.reshape(frames, (frames.shape[0], frames.shape[1]*frames.shape[2]*frames.shape[3]))
+    if len(frames.shape) == 4:
+        vec_frames = np.reshape(frames, (frames.shape[0], frames.shape[1]*frames.shape[2]*frames.shape[3]))
+    else:
+        vec_frames = np.reshape(frames, (frames.shape[0], frames.shape[1]*frames.shape[2]))
     dmd = MrDMD(svd_rank=4, max_level=3, max_cycles=1)
     dmd.fit(vec_frames.T)
     modes = dmd.modes.real
