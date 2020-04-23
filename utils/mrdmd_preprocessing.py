@@ -6,7 +6,7 @@ import shutil
 import warnings
 import cv2
 
-def dmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
+def mrdmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
     train_dir = os.path.join(src_dir, 'train')
     test_dir = os.path.join(src_dir, 'test')
 
@@ -75,17 +75,20 @@ def _stack_dmd(frames, window, num_modes, grey=True):
         selection = frames[i:i+window]
         if grey:
             selection = np.array([cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY) for frame in selection])
-        mode = _compute_dmd(selection)
-        if modes is None: 
+        mode = _compute_dmd(selection.astype(np.complex128))
+        if modes is None or mode.shape[1]<num_modes: 
             num_modes = mode.shape[1]
             output_shape = (num_sequences-window+1,frames.shape[1]*frames.shape[3],frames.shape[2],num_modes)
             if grey:
                 output_shape = (num_sequences-window+1, frames.shape[1], frames.shape[2],num_modes)
-            modes = np.ndarray(shape=output_shape)
+            if modes is None:
+                modes = np.ndarray(shape=output_shape)
+            else:
+                modes = modes[:,:,:,0:num_modes]
         if not grey:
-            mode = np.reshape(mode.T,(frames.shape[1]*frames.shape[3],frames.shape[2],num_modes))
+            mode = np.reshape(mode.T[0:num_modes,:],(frames.shape[1]*frames.shape[3],frames.shape[2],num_modes))
         else:
-            mode = np.reshape(mode.T,(frames.shape[1],frames.shape[2],num_modes))
+            mode = np.reshape(mode.T[0:num_modes,:],(frames.shape[1],frames.shape[2],num_modes))
         modes[i] = mode
     return modes
 
@@ -100,9 +103,9 @@ def _compute_dmd(frames):
     return modes
  
 if __name__ == '__main__':
-    sequence_length = 10 
+    sequence_length = 10
     image_size = (216,216,3)
     cwd = os.getcwd()
-    src_dir = os.path.join(cwd,'data/UCF-Preprocessed-OF')
+    src_dir = os.path.join(cwd,'data/UCF-Preprocessed-MrDMD')
     dest_dir = os.path.join(cwd,'data/MrDMD_data')
-    dmd_prep(src_dir, dest_dir, 5, 6, overwrite=True) 
+    mrdmd_prep(src_dir, dest_dir, 8, 6, overwrite=True) 

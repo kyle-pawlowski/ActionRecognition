@@ -92,7 +92,7 @@ def _compute_dmd(frames, num_modes):
     else:
         vec_frames = np.reshape(frames,(frames.shape[0], frames.shape[1]*frames.shape[2]))
     dmd = DMD(svd_rank=num_modes)
-    dmd.fit(vec_frames.T)
+    dmd.fit(np.nan_to_num(vec_frames.T.astype(np.float64),copy=True))
     modes = dmd.modes.real
     return modes
  
@@ -100,6 +100,6 @@ if __name__ == '__main__':
     sequence_length = 10 
     image_size = (216,216,3)
     cwd = os.getcwd()
-    src_dir = os.path.join(cwd,'data/UCF-Preprocessed-OF')
+    src_dir = os.path.join(cwd,'data/UCF-Preprocessed-DMD')
     dest_dir = os.path.join(cwd,'data/DMD_data')
     dmd_prep(src_dir, dest_dir, 5, 6, overwrite=True) 
