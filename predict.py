@@ -13,9 +13,9 @@ BatchSize = 32
 IMSIZE = (216, 216, 3)
 
 
-def predict_two_stream3_test():
-    spatial_weights_dir = '/home/changan/ActionRecognition/models/finetuned_resnet_RGB_65.h5'
-    temporal_weights_dir = '/home/changan/ActionRecognition/models/finetuned_resnet_flow.h5'
+def predict_two_stream3_test(spatial_weights_dir,temporal_weights_dir,list_dir):
+    #spatial_weights_dir = '/home/changan/ActionRecognition/models/finetuned_resnet_RGB_65.h5'
+    #temporal_weights_dir = '/home/changan/ActionRecognition/models/finetuned_resnet_flow.h5'
     model = two_stream_model(spatial_weights_dir=spatial_weights_dir, temporal_weights_dir=temporal_weights_dir)
 
     print(model.summary())
@@ -27,8 +27,7 @@ def predict_two_stream3_test():
     frames_dir = '/home/changan/ActionRecognition/data/frames'
     flow_images_dir = '/home/changan/ActionRecognition/data/flow_images'
     input_shape = (216, 216, 3)
-    generator = two_stream3_generator(test_list, frames_dir, flow_images_dir, 1, input_shape, N_CLASSES,
-                                      mean_sub=True, normalization=True, random_crop=False, horizontal_flip=False)
+    generator = two_stream3_generator(test_list, frames_dir, flow_images_dir, 1, input_shape, N_CLASSES, mean_sub=True, normalization=True, random_crop=False, horizontal_flip=False)
     steps = 300
     correct_num = 0
     for i in range(steps):
