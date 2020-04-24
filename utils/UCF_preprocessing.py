@@ -5,6 +5,8 @@ import shutil
 import scipy.misc
 import time
 from .OF_utils import optical_flow_prep
+from .dmd_preprocessing import dmd_prep
+from .mrdmd_preprocessing import mrdmd_prep
 from PIL import Image
 
 def combine_list_txt(list_dir):
@@ -167,7 +169,7 @@ def calc_mean(UCF_dir, img_size):
                     # successful read and frame should not be all zeros
                     if ret and frame.any():
                         if frame.shape != (240, 320, 3):
-                            frame = scipy.misc.imresize(frame, (240, 320, 3))
+                            frame = np.array(Image.fromarray(frame).resize((240, 320, 3)))
                         frames.append(frame)
                 cap.release()
     frames = np.stack(frames)
@@ -207,21 +209,36 @@ def preprocess_flow_image(flow_dir):
                 os.remove(flow_image_dir)
 
 
-def regenerate_data(data_dir, list_dir, UCF_dir):
+def regenerate_data(data_dir, list_dir, UCF_dir, temporal='OF',random=False):
     start_time = time.time()
     sequence_length = 10
     image_size = (216, 216, 3)
-
-    dest_dir = os.path.join(data_dir, 'UCF-Preprocessed-OF')
+    if 'MrDMD' in temporal:
+        dest_dir = os.path.join(data_dir,'UCF-Preprocessed-MrDMD')
+        sequence_length = 16 
+    elif 'DMD' in temporal:
+        dest_dir = os.path.join(data_dir,'UCF-Preprocessed-DMD')
+    else:
+        dest_dir = os.path.join(data_dir, 'UCF-Preprocessed-OF')
     # generate sequence for optical flow
     preprocessing(list_dir, UCF_dir, dest_dir, sequence_length, image_size, overwrite=True, normalization=False,
-                  mean_subtraction=False, horizontal_flip=False, random_crop=False, consistent=True, continuous_seq=True)
+                  mean_subtraction=False, horizontal_flip=False, random_crop=random, consistent=True, continuous_seq=True)
 
-    # compute optical flow data
-    src_dir = os.path.join(data_dir,'UCF-Preprocessed-OF')
-    dest_dir = os.path.join(data_dir,'OF_data')
-    optical_flow_prep(src_dir, dest_dir, mean_sub=True, overwrite=True)
-
+    # compute optical flow datai
+    if 'OF' in temporal:
+        src_dir = os.path.join(data_dir,'UCF-Preprocessed-OF')
+        dest_dir = os.path.join(data_dir,'OF_data')
+        optical_flow_prep(src_dir, dest_dir, mean_sub=True, overwrite=True)
+    elif 'MrDMD' in temporal:
+        src_dir = os.path.join(data_dir,'UCF-Preprocessed-MrDMD')
+        dest_dir = os.path.join(data_dir, 'MrDMD_data')
+        mrdmd_prep(src_dir,dest_dir,12,6,overwrite=True)
+    elif 'DMD' in temporal:
+        src_dir = os.path.join(data_dir,'UCF-Preprocessed-DMD')
+        dest_dir = os.path.join(data_dir,'DMD_data')
+        dmd_prep(src_dir,dest_dir,5,6,overwrite=True)
+    else:
+        print('no valid temporal data processing option')
     elapsed_time = time.time() - start_time
     print('Regenerating data takes:', int(elapsed_time / 60), 'minutes')
 

@@ -7,9 +7,11 @@ IMSIZE = (216, 216, 3)
 
 
 if __name__ == '__main__':
-    src_dir = '/home/kyle/Documents/Research/dmd_object_tracking_study/data/action_recognition/UCF-101'
-    dest_dir = '/home/kyle/Documents/Research/ActionRecognition/data/CNN_Predicted'
-    weights_dir = '/home/kyle/Documents/Research/ActionRecognition/models'
+    cwd = os.getcwd()
+    data_dir = os.path.join(cwd,'data')
+    src_dir = os.path.join(data_dir,'UCF-Preprocessed')
+    dest_dir = os.path.join(data_dir,'CNN_Predicted')
+    weights_dir = os.path.join(cwd,'models')
 
     finetuned_resnet_weights = os.path.join(weights_dir, 'finetuned_resnet.h5')
     model = finetuned_resnet(include_top=False, weights_dir=finetuned_resnet_weights)
