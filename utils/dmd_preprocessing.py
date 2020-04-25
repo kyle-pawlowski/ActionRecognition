@@ -92,7 +92,7 @@ def _compute_dmd(frames, num_modes):
     else:
         vec_frames = np.reshape(frames,(frames.shape[0], frames.shape[1]*frames.shape[2]))
     dmd = DMD(svd_rank=num_modes)
-    dmd.fit(np.nan_to_num(vec_frames.T.astype(np.float64),copy=True))
+    dmd.fit(np.nan_to_num(vec_frames.T,posinf=255,neginf=0))
     modes = dmd.modes.real
     return modes
  
