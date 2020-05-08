@@ -67,9 +67,16 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
 
 
 if __name__ == '__main__':
+    dataset = 'ucf'
+    if len(sys.argv) > 0:
+        dataset = sys.argv[0]
     cwd = os.getcwd()
-    data_dir = os.path.join(cwd, 'data')
-    list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
+    data_dir = os.path.join(cwd,'data')
+    if 'hmdb' in dataset.lower():
+        list_dir = os.path.join(data_dir,'hmdb51_test_train_splits')
+    else:
+        list_dir = os.path.join(data_dir,'ucfTrainTestlist')
+    
     weights_dir = os.path.join(cwd,'models')
 
 
