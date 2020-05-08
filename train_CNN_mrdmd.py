@@ -1,4 +1,5 @@
 import os
+import sys
 import keras.callbacks
 from utils.UCF_utils import image_from_sequence_generator, sequence_generator, get_data_list
 from models.finetuned_resnet import finetuned_resnet

@@ -1,5 +1,6 @@
 from utils.UCF_preprocessing import regenerate_data
 import os
+import sys
 
 dataset = 'ucf'
 if len(sys.argv) > 0:

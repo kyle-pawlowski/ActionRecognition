@@ -1,4 +1,5 @@
 import os
+import sys
 from train_CNN import fit_model
 from utils.UCF_utils import get_data_list
 from models.temporal_CNN import temporal_CNN
