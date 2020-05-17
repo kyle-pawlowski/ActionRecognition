@@ -6,7 +6,7 @@ import shutil
 import warnings
 import cv2
 
-def dmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
+def dmd_prep(src_dir, dest_dir, window, svd_rank, overwrite=False):
     train_dir = os.path.join(src_dir, 'train')
     test_dir = os.path.join(src_dir, 'test')
 
@@ -51,47 +51,55 @@ def dmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
                 file_dir = os.path.join(class_dir, filename)
                 frames = np.load(file_dir)
                 # note: store the final processed data with type of float16 to save storage
-                processed_data = _stack_dmd(frames, window, num_modes).astype(np.float16)
+                processed_data = _stack_dmd(frames, window, svd_rank).astype(np.float16)
                 dest_file_dir = os.path.join(dest_class_dir, filename)
                 np.save(dest_file_dir, processed_data)
             # print('No.{} class {} finished, data saved in {}'.format(index, class_name, dest_class_dir))
  
 
-def _stack_dmd(frames, window, num_modes, grey=True):
+def _stack_dmd(frames, window, svd_rank, grey=True, deeper=False):
     if frames.dtype != np.float32:
         frames = frames.astype(np.float32)
         warnings.warn('Warning! The data type has been changed to np.float32 for graylevel conversion...')
     frame_shape = frames.shape[1:-1]  # e.g. frames.shape is (10, 216, 216, 3)i
     frame_vec_size = frames.shape[1] * frames.shape[2] * frames.shape[3]
-    if grey:
-        frame_vec_size = frames.shape[1]*frames.shape[2]
     num_sequences = frames.shape[0]
-    output_shape = (num_sequences-window+1,frames.shape[1]*frames.shape[3],frames.shape[2],num_modes)  # dmd_modes shape is (139,968, num_modes, num_windows)
+    height = frames.shape[1]
+    width = frames.shape[2]
+    color_ch = frames.shape[3]
     if grey:
-        output_shape = (num_sequences-window+1,frames.shape[1],frames.shape[2],num_modes)
-    modes = None
-
+        frame_vec_size = height*width
+    
+    num_modes = None
     for i in range(num_sequences - window+1):
         selection = frames[i:i+window]
         if grey:
             selection = np.array([cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY) for frame in selection])
-        mode = _compute_dmd(selection, num_modes)
-        if modes is None: 
+        mode = _compute_dmd(selection, svd_rank)
+        if num_modes is None: 
             num_modes = mode.shape[1]
-            output_shape = (num_sequences-window+1,frames.shape[1]*frames.shape[3],frames.shape[2],num_modes)
-            if grey:
-                output_shape = (num_sequences-window+1,frames.shape[1],frames.shape[2],num_modes)
+            if grey and not deeper:
+                output_shape = (num_sequences-window+1, height,width*num_modes)
+            elif not grey and deeper:
+                output_shape = (num_sequences-window+1,height*color_ch,width,num_modes)  # dmd_modes shape is (139,968, num_modes, num_windows)
+            elif grey and deeper:
+                output_shape = (num_sequences-window+1,height,width,num_modes)
+            else:
+                output_shape = (num_sequences-window+1,height*color_ch,width*num_modes)
             modes = np.ndarray(shape=output_shape)
-        mode = np.reshape(mode.T,(frames.shape[1],frames.shape[2],num_modes))
+        if deeper:
+            mode = np.reshape(mode.T,(height,width,num_modes))
+        else:
+            mode = np.reshape(mode.T,(height,width*num_modes))
         modes[i] = mode
     return modes
 
-def _compute_dmd(frames, num_modes):
-    if len(frames.shape) == 4:
+def _compute_dmd(frames, svd_rank):
+    if len(frames.shape) == 4: #if from color image
         vec_frames = np.reshape(frames, (frames.shape[0], frames.shape[1]*frames.shape[2]*frames.shape[3]))
-    else:
+    else: #if from greyscale image
         vec_frames = np.reshape(frames,(frames.shape[0], frames.shape[1]*frames.shape[2]))
-    dmd = DMD(svd_rank=num_modes)
+    dmd = DMD(svd_rank=svd_rank)
     #print("input is nan: " + str(np.isnan(vec_frames).any()))
     #print("input is inf: " + str(np.isinf(vec_frames).any()))
     dmd.fit(np.nan_to_num(vec_frames.T,posinf=255,neginf=0))
