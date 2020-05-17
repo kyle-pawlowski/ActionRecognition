@@ -57,11 +57,11 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
                 verbose=2,
                 callbacks=[checkpointer,earlystopping]
             )
-            cwd = os.getcwd()
+            '''cwd = os.getcwd()
             data_dir = os.path.join(cwd,'data')
             list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
             UCF_dir = os.path.join(data_dir, 'UCF-101')
-            regenerate_data(data_dir, list_dir, UCF_dir,temporal='DMD',random=True)
+            regenerate_data(data_dir, list_dir, UCF_dir,temporal='DMD',random=True)'''
 
     except KeyboardInterrupt:
         print('Training is interrupted')
@@ -93,9 +93,9 @@ if __name__ == '__main__':
     #fit_model(model, train_data, test_data, weights_dir, input_shape)
     
     # train CNN using dmd as input
-    dmd_weights_dir = os.path.join(weights_dir, 'dmd_cnn_42.h5')
+    dmd_weights_dir = os.path.join(weights_dir, 'dmd_cnn_reshaped.h5')
     video_dir = os.path.join(data_dir, 'DMD_data')
     input_shape = (216,216,4)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     model = dmd_CNN(input_shape, N_CLASSES, dmd_weights_dir, include_top=True)
-    fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=False)
+    fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=True)
