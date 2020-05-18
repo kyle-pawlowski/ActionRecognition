@@ -79,13 +79,13 @@ def _stack_dmd(frames, window, svd_rank, grey=True, deeper=False):
         if num_modes is None: 
             num_modes = mode.shape[1]
             if grey and not deeper:
-                output_shape = (num_sequences-window+1, height,width*num_modes)
+                output_shape = (height,width*num_modes,num_sequences-window+1)
             elif not grey and deeper:
                 output_shape = (num_sequences-window+1,height*color_ch,width,num_modes)  # dmd_modes shape is (139,968, num_modes, num_windows)
             elif grey and deeper:
                 output_shape = (num_sequences-window+1,height,width,num_modes)
             else:
-                output_shape = (num_sequences-window+1,height*color_ch,width*num_modes)
+                output_shape = (height*color_ch,width*num_modes,num_sequences-window+1)
             modes = np.ndarray(shape=output_shape)
         if deeper:
             mode = np.reshape(mode.T,(height,width,num_modes))
