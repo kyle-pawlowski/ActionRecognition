@@ -91,7 +91,7 @@ def _stack_dmd(frames, window, svd_rank, grey=True, deeper=False):
             mode = np.reshape(mode.T,(height,width,num_modes))
         else:
             mode = np.reshape(mode.T,(height,width*num_modes))
-        modes[i] = mode
+        modes[:,:,i] = mode
     return modes
 
 def _compute_dmd(frames, svd_rank):
