@@ -57,20 +57,16 @@ def mrdmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
             # print('No.{} class {} finished, data saved in {}'.format(index, class_name, dest_class_dir))
  
 
-def _stack_dmd(frames, window, num_modes, grey=True):
+def _stack_dmd(frames, window, num_modes, grey=True, deeper=False):
     if frames.dtype != np.float32:
         frames = frames.astype(np.float32)
         warnings.warn('Warning! The data type has been changed to np.float32 for graylevel conversion...')
     frame_shape = frames.shape[1:-1]  # e.g. frames.shape is (10, 216, 216, 3)i
-    frame_vec_size = frames.shape[1] * frames.shape[2] * frames.shape[3]
-    if grey:
-        frame_vec_size = frames.shape[1]*frames.shape[2]
     num_sequences = frames.shape[0]
-    output_shape = (num_sequences-window+1,frames.shape[1]*frames.shape[3],frames.shape[2],num_modes)  # dmd_modes shape is (139,968, num_modes, num_windows)
-    if grey:
-        output_shape = (num_sequences-window+1, frames.shape[1], frames.shape[2],num_modes)
+    height = frames.shape[1]
+    width = frames.shape[2]
+    color_ch = frames.shape[3]
     modes = None
-
     for i in range(num_sequences - window+1):
         selection = frames[i:i+window]
         if grey:
@@ -78,18 +74,26 @@ def _stack_dmd(frames, window, num_modes, grey=True):
         mode = _compute_dmd(selection.astype(np.complex128))
         if modes is None or mode.shape[1]<num_modes: 
             num_modes = mode.shape[1]
-            output_shape = (num_sequences-window+1,frames.shape[1]*frames.shape[3],frames.shape[2],num_modes)
-            if grey:
-                output_shape = (num_sequences-window+1, frames.shape[1], frames.shape[2],num_modes)
+            
+            if grey and not deeper:
+                output_shape = (height,width*num_modes,num_sequences-window+1)
+            elif not grey and deeper:
+                output_shape = (num_sequences-window+1,height*color_ch,width,num_modes)  # dmd_modes shape is (139,968, num_modes, num_windows)
+            elif grey and deeper:
+                output_shape = (num_sequences-window+1,height,width,num_modes)
+            else:
+                output_shape = (height*color_ch,width*num_modes,num_sequences-window+1)
+                
             if modes is None:
                 modes = np.ndarray(shape=output_shape)
             else:
                 modes = modes[:,:,:,0:num_modes]
-        if not grey:
-            mode = np.reshape(mode.T[0:num_modes,:],(frames.shape[1]*frames.shape[3],frames.shape[2],num_modes))
+        if not deeper:
+            mode = np.reshape(mode.T[:,0:num_modes],output_shape[0:-1])
+            modes[:,:,i]
         else:
-            mode = np.reshape(mode.T[0:num_modes,:],(frames.shape[1],frames.shape[2],num_modes))
-        modes[i] = mode
+            mode = np.reshape(mode.T[:,0:num_modes],output_shape[1:])
+            modes[i] = mode
     return modes
 
 def _compute_dmd(frames):
