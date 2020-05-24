@@ -40,12 +40,18 @@ def sequence_generator(data_list, batch_size, input_shape, num_classes):
                 index = (index + 1) % len(data_list)
                 clip_dir, class_idx = data_list[index]
             clip_data = np.load(clip_dir)
-            if clip_data.shape[-1] != batch_x.shape[-1]:
+            if clip_data.shape != batch_x.shape[1:]:
                 #print('Truncating modes...')
-                temp_clip = np.reshape(clip_data,(clip_data.shape[0]*clip_data.shape[1]*clip_data.shape[2], clip_data.shape[3]))
+                if len(clip_data.shape) == 4:
+                    temp_clip = np.reshape(clip_data,(clip_data.shape[0]*clip_data.shape[1]*clip_data.shape[2], clip_data.shape[3]))
+                    temp_clip = pad_sequences(temp_clip, maxlen=batch_x.shape[-1],padding='post',truncating='post',dtype=temp_clip.dtype)
+                    clip_data = np.reshape(temp_clip,(clip_data.shape[0],clip_data.shape[1],clip_data.shape[2],batch_x.shape[-1]))
+                else:
+                    temp_clip = np.reshape(clip_data,(clip_data.shape[0]*clip_data.shape[2],clip_data.shape[1]))
+                    temp_clip = pad_sequences(temp_clip, maxlen=batch_x.shape[2],padding='post',truncating='post',dtype=temp_clip.dtype)
+                    clip_data = np.reshape(temp_clip,(clip_data.shape[0],batch_x.shape[2],clip_data.shape[2]))
                 #temp_clip = temp_clip[:,:,:,0:batch_x.shape[-1]]
-                temp_clip = pad_sequences(temp_clip, maxlen=batch_x.shape[-1],padding='post',truncating='post',dtype=temp_clip.dtype)
-                clip_data = np.reshape(temp_clip,(clip_data.shape[0],clip_data.shape[1],clip_data.shape[2],batch_x.shape[-1]))
+                
                 #print('reshaped to ' + str(clip_data.shape))
             if clip_data.shape != batch_x.shape[1:]:
                 print('shape should be '+str(batch_x.shape)+' but is actually '+str(clip_data.shape))
