@@ -4,7 +4,7 @@ import sys
 
 dataset = 'ucf'
 if len(sys.argv) > 0:
-    dataset = sys.argv[0]
+    dataset = sys.argv[1]
 
 cwd = os.getcwd()
 data_dir = os.path.join(cwd,'data')
