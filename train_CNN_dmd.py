@@ -97,5 +97,5 @@ if __name__ == '__main__':
     video_dir = os.path.join(data_dir, 'DMD_data')
     input_shape = (216,864,6)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
-    model = dmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, multitask=True)
+    model = dmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, multitask=True,for_hmdb=True)
     fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=True)
