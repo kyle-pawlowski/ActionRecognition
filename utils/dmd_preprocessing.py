@@ -62,13 +62,10 @@ def _stack_dmd(frames, window, svd_rank, grey=True, deeper=False):
         frames = frames.astype(np.float32)
         warnings.warn('Warning! The data type has been changed to np.float32 for graylevel conversion...')
     frame_shape = frames.shape[1:-1]  # e.g. frames.shape is (10, 216, 216, 3)i
-    frame_vec_size = frames.shape[1] * frames.shape[2] * frames.shape[3]
     num_sequences = frames.shape[0]
     height = frames.shape[1]
     width = frames.shape[2]
     color_ch = frames.shape[3]
-    if grey:
-        frame_vec_size = height*width
     
     num_modes = None
     for i in range(num_sequences - window+1):
@@ -88,10 +85,11 @@ def _stack_dmd(frames, window, svd_rank, grey=True, deeper=False):
                 output_shape = (height*color_ch,width*num_modes,num_sequences-window+1)
             modes = np.ndarray(shape=output_shape)
         if deeper:
-            mode = np.reshape(mode.T,(height,width,num_modes))
+            mode = np.reshape(mode.T,output_shape[0:-1])
+            modes[:,:,i] = mode
         else:
-            mode = np.reshape(mode.T,(height,width*num_modes))
-        modes[:,:,i] = mode
+            mode = np.reshape(mode.T,output_shape[1:])
+            modes[i] = mode
     return modes
 
 def _compute_dmd(frames, svd_rank):
