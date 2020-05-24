@@ -87,7 +87,10 @@ def _stack_dmd(frames, window, num_modes, grey=True, deeper=False):
             if modes is None:
                 modes = np.ndarray(shape=output_shape)
             else:
-                modes = modes[:,:,:,0:num_modes]
+                if deeper:
+                    modes = modes[:,:,:,0:num_modes]
+                else:
+                    modes = modes[:,0:width*num_modes,:]
         if not deeper:
             mode = np.reshape(mode.T[0:num_modes,:],output_shape[0:-1])
             modes[:,:,i]
