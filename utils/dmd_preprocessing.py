@@ -72,6 +72,8 @@ def _stack_dmd(frames, window, svd_rank, grey=True, deeper=False):
         selection = frames[i:i+window]
         if grey:
             selection = np.array([cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY) for frame in selection])
+        if selection.max() != 0:
+            selection *= 1.0/selection.max()
         mode = _compute_dmd(selection, svd_rank)
         if num_modes is None: 
             num_modes = mode.shape[1]
