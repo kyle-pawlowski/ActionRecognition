@@ -100,6 +100,7 @@ def _compute_dmd(frames, svd_rank):
     dmd = DMD(svd_rank=svd_rank)
     #print("input is nan: " + str(np.isnan(vec_frames).any()))
     #print("input is inf: " + str(np.isinf(vec_frames).any()))
+    vec_frames /= 255.0
     dmd.fit(np.nan_to_num(vec_frames.T,posinf=255,neginf=0))
     modes = dmd.modes.real
     return modes
