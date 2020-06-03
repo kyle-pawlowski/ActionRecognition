@@ -3,7 +3,7 @@ import os
 import sys
 
 dataset = 'ucf'
-if len(sys.argv) > 0:
+if len(sys.argv) > 1:
     dataset = sys.argv[1]
 
 cwd = os.getcwd()
