@@ -23,7 +23,7 @@ class LockedIterator(object):
         finally:
             self.lock.release()
 
-def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False):
+def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False, window_size=3):
     try:
         # using sequence or image_from_sequnece generator
         if optical_flow:
@@ -44,7 +44,7 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
         print(model.summary())
 
         print('Start fitting model')
-        for i in range(1):
+        for i in range(2):
             checkpointer = keras.callbacks.ModelCheckpoint(weights_dir, save_best_only=True, save_weights_only=True)
             earlystopping = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.001, patience=20, verbose=2, mode='auto')
             tensorboard = keras.callbacks.TensorBoard(log_dir='./logs/try', histogram_freq=0, write_graph=True, write_images=True)
@@ -57,11 +57,11 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
                 verbose=2,
                 callbacks=[checkpointer,earlystopping]
             )
-            '''cwd = os.getcwd()
+            cwd = os.getcwd()
             data_dir = os.path.join(cwd,'data')
             list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
             UCF_dir = os.path.join(data_dir, 'UCF-101')
-            regenerate_data(data_dir, list_dir, UCF_dir,temporal='DMD',random=True)'''
+            regenerate_data(data_dir, list_dir, UCF_dir,temporal='DMD',random=True, window_size=window_size)
 
     except KeyboardInterrupt:
         print('Training is interrupted')
