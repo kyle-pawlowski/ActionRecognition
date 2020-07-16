@@ -96,4 +96,4 @@ if __name__ == '__main__':
     cwd = os.getcwd()
     src_dir = os.path.join(cwd,'data/UCF-Preprocessed-OF')
     dest_dir = os.path.join(cwd,'data/OF_data')
-    optical_flow_prep(src_dir, dest_dir, mean_sub=True, overwrite=True)
+    optical_flow_prep(src_dir, dest_dir, mean_sub=False, overwrite=True)
