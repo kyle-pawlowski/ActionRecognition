@@ -5,6 +5,7 @@ from collections import OrderedDict
 import shutil
 import warnings
 import cv2
+import sys
 
 def dmd_prep(src_dir, dest_dir, window, svd_rank, overwrite=False):
     train_dir = os.path.join(src_dir, 'train')
@@ -105,7 +106,7 @@ def _compute_dmd(frames, svd_rank):
         vec_frames = np.reshape(frames,(frames.shape[0], frames.shape[1]*frames.shape[2]))
     dmd = DMD(svd_rank=svd_rank)
     #print("input is nan: " + str(np.isnan(vec_frames).any()))
-    #print("input is inf: " + str(np.isinf(vec_frames).any()))
+    #print("input is inf: " + str(np.isinf(vec_frames ).any()))
     vec_frames /= 255.
     vec_frames = np.where(vec_frames==0,1,vec_frames)
     dmd.fit(np.nan_to_num(vec_frames.T,posinf=255,neginf=1))
@@ -113,9 +114,12 @@ def _compute_dmd(frames, svd_rank):
     return modes
  
 if __name__ == '__main__':
+    window_size = 5
+    if len(sys.argv) > 0:
+        window_size = sys.argv[1]
     sequence_length = 16 
     image_size = (216,216,3)
     cwd = os.getcwd()
     src_dir = os.path.join(cwd,'data/UCF-Preprocessed-DMD')
     dest_dir = os.path.join(cwd,'data/DMD_data')
-    dmd_prep(src_dir, dest_dir, 3, 6, overwrite=True) 
+    dmd_prep(src_dir, dest_dir, window_size, -1, overwrite=True) 
