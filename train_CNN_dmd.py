@@ -104,4 +104,4 @@ if __name__ == '__main__':
     input_shape = (216,216, sequence_length-window_size+1)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     model = dmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, multitask=False,for_hmdb=False)
-    fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=True)
+    fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=True,window_size=window_size)
