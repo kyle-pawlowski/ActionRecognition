@@ -7,7 +7,7 @@ window_size = 3
 if len(sys.argv) > 1:
     dataset = sys.argv[1]
 if len(sys.argv) > 2:
-    window_size = sys.argv[2]
+    window_size = int(sys.argv[2])
 
 cwd = os.getcwd()
 data_dir = os.path.join(cwd,'data')
