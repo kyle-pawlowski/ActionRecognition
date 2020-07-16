@@ -116,7 +116,7 @@ def _compute_dmd(frames, svd_rank):
 if __name__ == '__main__':
     window_size = 5
     if len(sys.argv) > 0:
-        window_size = sys.argv[1]
+        window_size = int(sys.argv[1])
     sequence_length = 16 
     image_size = (216,216,3)
     cwd = os.getcwd()
