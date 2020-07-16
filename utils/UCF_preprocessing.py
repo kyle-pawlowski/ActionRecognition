@@ -209,9 +209,9 @@ def preprocess_flow_image(flow_dir):
                 os.remove(flow_image_dir)
 
 
-def regenerate_data(data_dir, list_dir, UCF_dir, temporal='OF',random=False):
+def regenerate_data(data_dir, list_dir, UCF_dir, temporal='OF',random=False, window_size=5):
     start_time = time.time()
-    sequence_length = 10
+    sequence_length = 16
     image_size = (216, 216, 3)
     if 'MrDMD' in temporal:
         dest_dir = os.path.join(data_dir,'UCF-Preprocessed-MrDMD')
@@ -232,11 +232,11 @@ def regenerate_data(data_dir, list_dir, UCF_dir, temporal='OF',random=False):
     elif 'MrDMD' in temporal:
         src_dir = os.path.join(data_dir,'UCF-Preprocessed-MrDMD')
         dest_dir = os.path.join(data_dir, 'MrDMD_data')
-        mrdmd_prep(src_dir,dest_dir,12,6,overwrite=True)
+        mrdmd_prep(src_dir,dest_dir,window_size,-1,overwrite=True)
     elif 'DMD' in temporal:
         src_dir = os.path.join(data_dir,'UCF-Preprocessed-DMD')
         dest_dir = os.path.join(data_dir,'DMD_data')
-        dmd_prep(src_dir,dest_dir,5,6,overwrite=True)
+        dmd_prep(src_dir,dest_dir,window_size,-1,overwrite=True)
     else:
         print('no valid temporal data processing option')
     elapsed_time = time.time() - start_time
