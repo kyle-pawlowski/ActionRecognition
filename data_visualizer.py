@@ -17,7 +17,16 @@ def np_to_video(array, window_name='data'):
         combined = frame.max(axis=2)
         #combined = frame[:,:,3]
         maximum = combined.max()
-        normalized = abs((combined/maximum)*255)
+        normalized = ((combined/maximum)*255).astype(np.int)
+        cv2.imshow(window_name,normalized.astype(np.ubyte))
+        cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    
+def of_to_video(array, window_name='data'):
+    for i in range(array.shape[2]):
+        frame = array[:,:,i]
+        maximum = frame.max()
+        normalized = ((frame/maximum)*255).astype(np.int)
         cv2.imshow(window_name,normalized.astype(np.ubyte))
         cv2.waitKey(0)
     cv2.destroyAllWindows()
@@ -40,9 +49,11 @@ if __name__ == '__main__':
     of_train_data, of_test_data, class_index = get_data_list(list_dir, of_dir)
     of_gen = sequence_generator(of_train_data,1,of_shape,num_classes)
     '''
-    
-    modes = np.load(os.path.join(dmd_dir, 'test','Nunchucks','v_Nunchucks_g04_c01.npy'))
-    modes = np.reshape(modes, (216,216,4,6))
-    modes = np.reshape(modes,(6,216,216,4))
-    np_to_video(modes,'dmd')
+    video = 
+    modes = np.load(os.path.join(dmd_dir, video))
+    flow = np.load(os.path.join(of_dir, video))
+    #modes = np.reshape(modes, (216,216,4,6))
+    #modes = np.reshape(modes,(6,216,216,4))
+    of_to_video(modes,'dmd')
+    of_to_video(flow,'flow')
     
