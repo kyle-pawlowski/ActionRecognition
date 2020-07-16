@@ -70,8 +70,12 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
 if __name__ == '__main__':
     
     dataset = 'ucf'
-    if len(sys.argv) > 0:
+    window_size = 3
+    sequence_length = 16
+    if len(sys.argv) > 1:
         dataset = sys.argv[1]
+    if len(sys.argv) > 2:
+        window_size = int(sys.argv[2])
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
     if 'hmdb' in dataset.lower():
@@ -93,9 +97,9 @@ if __name__ == '__main__':
     #fit_model(model, train_data, test_data, weights_dir, input_shape)
     
     # train CNN using dmd as input
-    dmd_weights_dir = os.path.join(weights_dir, 'dmd_cnn_multitask.h5')
+    dmd_weights_dir = os.path.join(weights_dir, 'dmd_cnn_window.h5')
     video_dir = os.path.join(data_dir, 'DMD_data')
-    input_shape = (216,864,6)
+    input_shape = (216,216, sequence_length-window_size+1)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
-    model = dmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, multitask=True,for_hmdb=True)
+    model = dmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, multitask=False,for_hmdb=False)
     fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=True)
