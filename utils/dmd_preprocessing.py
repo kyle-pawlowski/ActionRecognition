@@ -108,14 +108,14 @@ def _compute_dmd(frames, svd_rank):
     #print("input is nan: " + str(np.isnan(vec_frames).any()))
     #print("input is inf: " + str(np.isinf(vec_frames ).any()))
     vec_frames /= 255.
-    vec_frames = np.where(vec_frames==0,1,vec_frames)
+    #vec_frames = np.where(vec_frames==0,1,vec_frames)
     dmd.fit(np.nan_to_num(vec_frames.T,posinf=255,neginf=1))
     modes = dmd.modes.real
     return modes
  
 if __name__ == '__main__':
     window_size = 5
-    if len(sys.argv) > 0:
+    if len(sys.argv) > 1:
         window_size = int(sys.argv[1])
     sequence_length = 16 
     image_size = (216,216,3)
