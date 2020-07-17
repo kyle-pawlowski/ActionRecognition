@@ -54,7 +54,8 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
                 validation_data=test_generator,
                 validation_steps=100,
                 verbose=2,
-                callbacks=[checkpointer,earlystopping]
+                callbacks=[checkpointer,earlystopping],
+                use_multiprocessing=True
             )
             '''cwd = os.getcwd()
             data_dir = os.path.join(cwd,'data')
@@ -68,7 +69,8 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
 
 if __name__ == '__main__':
     dataset = 'ucf'
-    window_size = 3
+    window_size = 8
+    sequence_length = 16
     if len(sys.argv) > 1:
         dataset = sys.argv[1]
     if len(sys.argv) > 2:
@@ -97,7 +99,7 @@ if __name__ == '__main__':
     dmd_weights_dir = os.path.join(weights_dir, 'mrdmd_cnn_compressed.h5')
     of_weights_dir = os.path.join(weights_dir, 'temporal_cnn_42.h5')
     video_dir = os.path.join(data_dir, 'MrDMD_data')
-    input_shape = (216,216,5)
+    input_shape = (216,216,sequence_length-window_size+1)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     model = mrdmd_CNN(input_shape, N_CLASSES, dmd_weights_dir, include_top=True)
     fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=True)
