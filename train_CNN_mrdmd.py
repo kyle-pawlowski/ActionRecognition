@@ -68,8 +68,11 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
 
 if __name__ == '__main__':
     dataset = 'ucf'
-    if len(sys.argv) > 0:
+    window_size = 3
+    if len(sys.argv) > 1:
         dataset = sys.argv[1]
+    if len(sys.argv) > 2:
+        window_size = int(sys.argv[2])
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
     if 'hmdb' in dataset.lower():
@@ -94,7 +97,7 @@ if __name__ == '__main__':
     dmd_weights_dir = os.path.join(weights_dir, 'mrdmd_cnn_reshaped.h5')
     of_weights_dir = os.path.join(weights_dir, 'temporal_cnn_42.h5')
     video_dir = os.path.join(data_dir, 'MrDMD_data')
-    input_shape = (216,1728,5)
+    input_shape = (216,216,5)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     model = mrdmd_CNN(input_shape, N_CLASSES, dmd_weights_dir, include_top=True)
     fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=True)

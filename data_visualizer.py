@@ -34,7 +34,7 @@ def of_to_video(array, window_name='data'):
 if __name__ == '__main__':
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
-    dmd_dir = os.path.join(data_dir,'DMD_data')
+    dmd_dir = os.path.join(data_dir,'MrDMD_data')
     of_dir = os.path.join(data_dir,'OF_data')
     list_dir = os.path.join(data_dir,'ucfTrainTestlist')
     

@@ -232,7 +232,7 @@ def regenerate_data(data_dir, list_dir, UCF_dir, temporal='OF',random=False, win
     elif 'MrDMD' in temporal:
         src_dir = os.path.join(data_dir,'UCF-Preprocessed-MrDMD')
         dest_dir = os.path.join(data_dir, 'MrDMD_data')
-        mrdmd_prep(src_dir,dest_dir,window_size,-1,overwrite=True)
+        mrdmd_prep(src_dir,dest_dir,8,-1,overwrite=True)
     elif 'DMD' in temporal:
         src_dir = os.path.join(data_dir,'UCF-Preprocessed-DMD')
         dest_dir = os.path.join(data_dir,'DMD_data')

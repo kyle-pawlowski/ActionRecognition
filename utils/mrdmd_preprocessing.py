@@ -57,7 +57,7 @@ def mrdmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
             # print('No.{} class {} finished, data saved in {}'.format(index, class_name, dest_class_dir))
  
 
-def _stack_dmd(frames, window, num_modes, grey=True, deeper=False):
+def _stack_dmd(frames, window, num_modes, grey=True, deeper=False, condensed=True):
     if frames.dtype != np.float32:
         frames = frames.astype(np.float32)
         warnings.warn('Warning! The data type has been changed to np.float32 for graylevel conversion...')
@@ -74,8 +74,9 @@ def _stack_dmd(frames, window, num_modes, grey=True, deeper=False):
         mode = _compute_dmd(selection.astype(np.complex128))
         if modes is None or mode.shape[1]<num_modes: 
             num_modes = mode.shape[1]
-            
-            if grey and not deeper:
+            if condensed:
+                output_shape = (height,width,num_sequences-window+1)
+            elif grey and not deeper:
                 output_shape = (height,width*num_modes,num_sequences-window+1)
             elif not grey and deeper:
                 output_shape = (num_sequences-window+1,height*color_ch,width,num_modes)  # dmd_modes shape is (139,968, num_modes, num_windows)
@@ -86,12 +87,16 @@ def _stack_dmd(frames, window, num_modes, grey=True, deeper=False):
                 
             if modes is None:
                 modes = np.ndarray(shape=output_shape)
-            else:
+            elif not condensed:
                 if deeper:
                     modes = modes[:,:,:,0:num_modes]
                 else:
                     modes = modes[:,0:width*num_modes,:]
-        if not deeper:
+        if condensed:
+            mode = np.max(mode, axis=1)
+            mode = np.reshape(mode,output_shape[:-1])
+            modes[:,:,i] = mode
+        elif not deeper:
             mode = np.reshape(mode.T[0:num_modes,:],output_shape[0:-1])
             modes[:,:,i]
         else:
@@ -110,9 +115,9 @@ def _compute_dmd(frames):
     return modes
  
 if __name__ == '__main__':
-    sequence_length = 10
+    sequence_length = 16
     image_size = (216,216,3)
     cwd = os.getcwd()
     src_dir = os.path.join(cwd,'data/UCF-Preprocessed-MrDMD')
     dest_dir = os.path.join(cwd,'data/MrDMD_data')
-    mrdmd_prep(src_dir, dest_dir, 8, 6, overwrite=True) 
+    mrdmd_prep(src_dir, dest_dir, 8, -1, overwrite=True) 
