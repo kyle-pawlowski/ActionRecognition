@@ -62,7 +62,8 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
                 validation_data=test_generator,
                 validation_steps=100,
                 verbose=2,
-                callbacks=[checkpointer,earlystopping]
+                callbacks=[checkpointer,earlystopping],
+                use_multiprocessing=True
             )
 
     except KeyboardInterrupt:
