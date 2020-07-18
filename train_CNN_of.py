@@ -26,6 +26,6 @@ if __name__ == '__main__':
     video_dir = os.path.join(data_dir, 'OF_data')
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     input_shape = (216, 216, 30)
-    model = temporal_CNN(input_shape, N_CLASSES, new_weights_dir, include_top=True,multitask=multitasking)
+    model = temporal_CNN(input_shape, (N_CLASSES,51), new_weights_dir, include_top=True,multitask=multitasking)
     fit_model(model, train_data, test_data, new_weights_dir, input_shape, optical_flow=True)
 
