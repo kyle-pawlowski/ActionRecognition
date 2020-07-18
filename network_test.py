@@ -72,6 +72,7 @@ if __name__ == '__main__':
         video_dir = os.path.join(data_dir,'MrDMD_data')
         (216, 216, sequence_length-window_size+1)
     elif 'of' in datatype.lower():
+        sequence_length=10
         video_dir = os.path.join(data_dir,'UCF-Preprocessed-OF')
         input_shape = (216,216,2*sequence_length-2)
         model = temporal_CNN(input_shape,N_CLASSES,weights_dir,include_top=True, is_training=False)
