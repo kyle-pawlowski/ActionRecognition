@@ -7,8 +7,11 @@ from models.temporal_CNN import temporal_CNN
 N_CLASSES=101
 if __name__ == '__main__':
     dataset = 'ucf'
+    multitasking = False
     if len(sys.argv) > 1:
         dataset = sys.argv[1]
+        if len(sys.argv) >2:
+            multitasking = int(sys.argv[2])
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
     if 'hmdb' in dataset.lower():
@@ -19,10 +22,10 @@ if __name__ == '__main__':
     weights_dir = os.path.join('models')
     weights_dir = os.path.join(cwd,'models')
     old_weights_dir = os.path.join(weights_dir, 'temporal_cnn_42.h5')
-    new_weights_dir = os.path.join(weights_dir, 'temporal_cnn_control.h5')
+    new_weights_dir = os.path.join(weights_dir, 'temporal_cnn_multitask.h5')
     video_dir = os.path.join(data_dir, 'OF_data')
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     input_shape = (216, 216, 30)
-    model = temporal_CNN(input_shape, N_CLASSES, new_weights_dir, include_top=True)
+    model = temporal_CNN(input_shape, N_CLASSES, new_weights_dir, include_top=True,multitask=multitasking)
     fit_model(model, train_data, test_data, new_weights_dir, input_shape, optical_flow=True)
 
