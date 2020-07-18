@@ -43,7 +43,7 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
         print(model.summary())
 
         print('Start fitting model')
-        for i in range(1):
+        for i in range(3):
             cwd = os.getcwd()
             data_dir = os.path.join(cwd,'data')
             list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
