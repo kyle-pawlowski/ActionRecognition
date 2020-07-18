@@ -54,7 +54,7 @@ def pipeline_test(model, test_data, data_type):
 if __name__ == '__main__':
     datatype = 'dmd'
     window_size = 5
-    sequence_length =10
+    sequence_length =16
     weights_name = 'dmd_cnn_window.h5'
     if len(sys.argv) > 1:
         datatype = sys.argv[1]
