@@ -103,7 +103,7 @@ if __name__ == '__main__':
     #fit_model(model, train_data, test_data, weights_dir, input_shape)
     
     # train CNN using dmd as input
-    dmd_weights_dir = os.path.join(weights_dir, 'dmd_cnn_window.h5')
+    dmd_weights_dir = os.path.join(weights_dir, 'dmd_cnn_multitask.h5')
     video_dir = os.path.join(data_dir, 'DMD_data')
     input_shape = (216,216, sequence_length-window_size+1)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
