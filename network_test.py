@@ -44,7 +44,7 @@ def pipeline_test(model, test_data, data_type, window_size=3):
             processed = stack_optical_flow(datax)
         processed = np.reshape(processed, (1,)+processed.shape)
         answer = model.predict(processed)
-        if answer[0,datay] == 1:
+        if answer[0,datay-1] == 1:
             correct+=1
         total+=1
     time_taken = time.time()-start_time
