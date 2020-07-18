@@ -23,7 +23,7 @@ class LockedIterator(object):
         finally:
             self.lock.release()
 
-def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False, window_size=3, secondary=None):
+def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False, window_size=3, secondary=(None,None)):
     try:
         # using sequence or image_from_sequnece generator
         if optical_flow:
