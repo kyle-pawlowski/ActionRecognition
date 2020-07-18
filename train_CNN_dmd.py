@@ -114,10 +114,13 @@ if __name__ == '__main__':
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     if hybrid:
         mrtrain_data, mrtest_data, _ = get_data_list(list_dir,mrdmd_dir)
-    model = dmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, multitask=multitasking,for_hmdb=False)
+        
+    model = dmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, 
+                    multitask=multitasking,for_hmdb=('hmdb' in dataset.lower()))
+    
     if hybrid:
-        fit_model(model, mrtrain_data, mrtest_data, dmd_weights_dir, input_shape, 
-                  optical_flow=True,window_size=window_size, secondary=(train_data,test_data))
+        fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, 
+                  optical_flow=True,window_size=window_size, secondary=(mrtrain_data,mrtest_data))
     else:
         fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, 
                   optical_flow=True,window_size=window_size)
