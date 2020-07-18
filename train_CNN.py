@@ -1,4 +1,6 @@
 import os
+import sys
+
 import keras.callbacks
 from utils.UCF_utils import image_from_sequence_generator, sequence_generator, get_data_list
 from models.finetuned_resnet import finetuned_resnet
@@ -54,13 +56,14 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
                 validation_data=test_generator,
                 validation_steps=100,
                 verbose=2,
-                callbacks=[checkpointer,earlystopping]
+                callbacks=[checkpointer,earlystopping],
+                use_multiprocessing=True
             )
-            cwd = os.getcwd()
+            '''cwd = os.getcwd()
             data_dir = os.path.join(cwd,'data')
             list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
             UCF_dir = os.path.join(data_dir, 'UCF-101')
-            regenerate_data(data_dir, list_dir, UCF_dir,random=True)
+            regenerate_data(data_dir, list_dir, UCF_dir,random=True)'''
 
     except KeyboardInterrupt:
         print('Training is interrupted')
@@ -68,8 +71,8 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
 
 if __name__ == '__main__':
     dataset = 'ucf'
-    if len(sys.argv) > 0:
-        dataset = sys.argv[0]
+    if len(sys.argv) > 1:
+        dataset = sys.argv[1]
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
     if 'hmdb' in dataset.lower():
