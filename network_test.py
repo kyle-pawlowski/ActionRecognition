@@ -79,7 +79,7 @@ if __name__ == '__main__':
         input_shape = (216,216,2*sequence_length-2)
         model = temporal_CNN(input_shape,N_CLASSES,weights_dir,include_top=True, is_training=False)
     else:
-        video_dir = os.path.join(data_dir,'UCF-Preprocessed-DMD')
+        video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
         input_shape = (216,216,sequence_length-window_size+1)
         model = dmd_CNN(input_shape, (N_CLASSES,51), weights_dir, include_top=True, multitask=False,for_hmdb=False, is_training=False)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
