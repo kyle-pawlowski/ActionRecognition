@@ -31,7 +31,7 @@ def test_dmd(model, test_data):
         total += BatchSize
     print('accuracy: ' + str(num_correct*100/total))
     
-def pipeline_test(model, test_data, data_type):
+def pipeline_test(model, test_data, data_type, window_size=3):
     correct = 0
     total = 0
     start_time = time.time()
@@ -39,7 +39,7 @@ def pipeline_test(model, test_data, data_type):
         example = os.path.splitext(example)[0] + '.npy'
         datax = np.load(example)
         if 'dmd' in data_type.lower():
-            processed = _stack_dmd(datax,5,-1,deeper=False,condensed=True)
+            processed = _stack_dmd(datax,window_size,-1,deeper=False,condensed=True)
         else:
             processed = stack_optical_flow(datax)
         processed = np.reshape(processed, (1,)+processed.shape)
@@ -82,4 +82,4 @@ if __name__ == '__main__':
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     
     #test_dmd(model,test_data)
-    pipeline_test(model,test_data,'OF')
+    pipeline_test(model,test_data,datatype, window_size=window_size)
