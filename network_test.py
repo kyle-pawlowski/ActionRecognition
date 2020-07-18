@@ -44,6 +44,8 @@ def pipeline_test(model, test_data, data_type, window_size=3):
             processed = stack_optical_flow(datax)
         processed = np.reshape(processed, (1,)+processed.shape)
         answer = model.predict(processed)
+        maximum = np.max(answer)
+        answer = np.equal(answer,maximum)
         if answer[0,datay-1] == 1:
             correct+=1
         total+=1
