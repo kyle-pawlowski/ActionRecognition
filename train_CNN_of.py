@@ -7,7 +7,7 @@ from models.temporal_CNN import temporal_CNN
 N_CLASSES=101
 if __name__ == '__main__':
     dataset = 'ucf'
-    if len(sys.argv) > 0:
+    if len(sys.argv) > 1:
         dataset = sys.argv[1]
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
