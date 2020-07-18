@@ -11,7 +11,7 @@ import time
 import keras
 import numpy as np
 
-from models.temporal_CNN import temporal_CNN, dmd_CNN
+from models.temporal_CNN import temporal_CNN, dmd_CNN, mrdmd_CNN
 from utils.UCF_utils import sequence_generator, get_data_list
 from utils.dmd_preprocessing import _stack_dmd
 from utils.OF_utils import stack_optical_flow
@@ -71,8 +71,9 @@ if __name__ == '__main__':
     weights_dir = os.path.join(cwd,'models')
     weights_dir = os.path.join(weights_dir, weights_name)
     if 'mrdmd' in datatype.lower():
-        video_dir = os.path.join(data_dir,'MrDMD_data')
-        (216, 216, sequence_length-window_size+1)
+        video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
+        input_shape= (216, 216, sequence_length-window_size+1)
+        model = mrdmd_CNN(input_shape, N_CLASSES, weights_dir, is_training=False)
     elif 'of' in datatype.lower():
         sequence_length=10
         video_dir = os.path.join(data_dir,'UCF-Preprocessed-OF')
