@@ -23,12 +23,12 @@ class LockedIterator(object):
         finally:
             self.lock.release()
 
-def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False, window_size=3):
+def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False, window_size=3, secondary=None):
     try:
         # using sequence or image_from_sequnece generator
         if optical_flow:
-            train_generator = LockedIterator(sequence_generator(train_data, BatchSize, input_shape, N_CLASSES))
-            test_generator = LockedIterator(sequence_generator(test_data, BatchSize, input_shape, N_CLASSES))
+            train_generator = LockedIterator(sequence_generator(train_data, BatchSize, input_shape, N_CLASSES, secondary_data_list=secondary[0]))
+            test_generator = LockedIterator(sequence_generator(test_data, BatchSize, input_shape, N_CLASSES,secondary_data_list=secondary[1]))
         else:
             train_generator = LockedIterator(image_from_sequence_generator(train_data, BatchSize, (6,)+input_shape, N_CLASSES))
             test_generator = LockedIterator(image_from_sequence_generator(test_data, BatchSize, (6,)+input_shape, N_CLASSES))
@@ -75,6 +75,7 @@ if __name__ == '__main__':
     dataset = 'ucf'
     window_size = 3
     multitasking = False
+    hybrid=False
     sequence_length = 16
     if len(sys.argv) > 1:
         dataset = sys.argv[1]
@@ -82,6 +83,9 @@ if __name__ == '__main__':
             window_size = int(sys.argv[2])
             if len(sys.argv) > 3:
                 multitasking = int(sys.argv[3])
+                if len(sys.argv)> 4:
+                    hybrid = int(sys.argv[4])
+                    
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
     if 'hmdb' in dataset.lower():
@@ -105,7 +109,15 @@ if __name__ == '__main__':
     # train CNN using dmd as input
     dmd_weights_dir = os.path.join(weights_dir, 'dmd_cnn_multitask.h5')
     video_dir = os.path.join(data_dir, 'DMD_data')
+    mrdmd_dir = os.path.join(data_dir, 'MrDMD_data') #used for hybrid DMD
     input_shape = (216,216, sequence_length-window_size+1)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
+    if hybrid:
+        mrtrain_data, mrtest_data, _ = get_data_list(list_dir,mrdmd_dir)
     model = dmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, multitask=multitasking,for_hmdb=False)
-    fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=True,window_size=window_size)
+    if hybrid:
+        fit_model(model, mrtrain_data, mrtest_data, dmd_weights_dir, input_shape, 
+                  optical_flow=True,window_size=window_size, secondary=(train_data,test_data))
+    else:
+        fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, 
+                  optical_flow=True,window_size=window_size)
