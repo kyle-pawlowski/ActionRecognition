@@ -35,6 +35,7 @@ def sequence_generator(data_list, batch_size, input_shape, num_classes, secondar
             
             if secondary_data_list != None: #using hybrid-DMD
                 second_clip_dir, _ = secondary_data_list[index]
+                second_clip_dir = os.path.splitext(second_clip_dir)[0] + '.npy'
                 
             # avoid endless loop
             count = 0
