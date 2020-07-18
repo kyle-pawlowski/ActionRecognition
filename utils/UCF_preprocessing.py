@@ -246,7 +246,7 @@ if __name__ == '__main__':
     '''
         extract frames from videos as npy files
     '''
-    sequence_length = 10
+    sequence_length = 16
     image_size = (216, 216, 3)
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
@@ -274,4 +274,8 @@ if __name__ == '__main__':
     # preprocess_flow_image(flow_dir)
 
     # generate sequence and optical flow data
-    regenerate_data(data_dir, list_dir, UCF_dir)
+    #regenerate_data(data_dir, list_dir, UCF_dir)
+    dest_dir = os.path.join(data_dir,'UCF-DMD-Testing')
+    preprocessing(list_dir,UCF_dir,dest_dir,sequence_length,image_size,
+                  overwrite=True,normalization=False,mean_subtraction=False,
+                  horizontal_flip=False,random_crop=False, continuous_seq=True)
