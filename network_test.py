@@ -59,7 +59,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         datatype = sys.argv[1]
         if len(sys.argv) > 2:
-              window_size = sys.argv[2]
+              window_size = int(sys.argv[2])
               if len(sys.argv) >3:
                   weights_name = sys.argv[3]
         
