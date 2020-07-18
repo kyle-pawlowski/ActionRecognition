@@ -98,13 +98,13 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     if is_training:
-        x = Dropout(0.5)(x)
+        x = Dropout(0.75)(x)
     
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv4')(x)
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     if is_training:
-        x = Dropout(0.5)(x)
+        x = Dropout(0.75)(x)
 
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv5')(x)
     x = BatchNormalization(axis=3)(x)
@@ -114,7 +114,7 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
     ucf = Flatten()(x)
     ucf = Dense(4096, activation='relu', name='tmp_fc6')(ucf)
     if is_training: 
-        ucf = Dropout(0.5)(ucf)
+        ucf = Dropout(0.75)(ucf)
     
     if multitask:
         hmdb = Flatten()(x)
@@ -123,7 +123,7 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
 
     ucf = Dense(2048, activation='relu', name='tmp_fc7')(ucf)
     if is_training:
-        ucf = Dropout(0.5)(ucf)
+        ucf = Dropout(0.75)(ucf)
     
     if multitask:
         hmdb = Dense(2048, activation='relu', name='tmp_fc9')(hmdb)
