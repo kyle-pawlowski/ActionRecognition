@@ -135,8 +135,8 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
 
     ucf = Flatten()(x)
     ucf = Dense(4096, activation='relu', name='tmp_fc6')(ucf)
-   # if is_training: 
-       # ucf = Dropout(0.9)(ucf)
+    if is_training: 
+        ucf = Dropout(0.5)(ucf)
     
     if multitask:
         hmdb = Flatten()(x)
@@ -144,8 +144,8 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
         hmdb = Dropout(0)(hmdb)
 
     ucf = Dense(2048, activation='relu', name='tmp_fc7')(ucf)
-    #if is_training:
-        #ucf = Dropout(0.9)(ucf)
+    if is_training:
+        ucf = Dropout(0.5)(ucf)
     
     if multitask:
         hmdb = Dense(2048, activation='relu', name='tmp_fc9')(hmdb)
