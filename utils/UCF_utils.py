@@ -80,12 +80,12 @@ def sequence_generator(data_list, batch_size, input_shape, num_classes, secondar
                 new_secondary = np.ndarray(clip_data.shape)
                 if extra_frames > 0:
                     offset=0
-                    for i in range(second_data.shape[-1]):
+                    for j in range(second_data.shape[-1]):
                         if extra_frames < 1:
                             break
-                        new_secondary[:,:,i+offset] = second_data[:,:,i]
+                        new_secondary[:,:,j+offset] = second_data[:,:,j]
                         offset += 1
-                        new_secondary[:,:,i+offset] = second_data[:,:,i]
+                        new_secondary[:,:,j+offset] = second_data[:,:,j]
                         extra_frames -= 1
                 
                 clip_data = np.maximum(clip_data,new_secondary)
