@@ -44,7 +44,7 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
         print(model.summary())
 
         print('Start fitting model')
-        for i in range(3):
+        for i in range(5):
             # regenerate data
             '''cwd = os.getcwd()
             data_dir = os.path.join(cwd,'data')
