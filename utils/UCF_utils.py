@@ -40,7 +40,10 @@ def sequence_generator(data_list, batch_size, input_shape, num_classes, secondar
             # avoid endless loop
             count = 0
             while not os.path.exists(clip_dir) or (secondary_data_list != None and os.path.exists(second_clip_dir)):
-                print("couldn't find " + str(clip_dir))
+                if secondary_data_list != None and not os.path.exists(second_clip_dir):
+                    print("couldn't find " + str(second_clip_dir))
+                else:
+                    print("couldn't find " + str(clip_dir))
                 count += 1
                 if count > 20:
                     raise FileExistsError('Too many file missing')
