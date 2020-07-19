@@ -46,6 +46,11 @@ def sequence_generator(data_list, batch_size, input_shape, num_classes, secondar
                     raise FileExistsError('Too many file missing')
                 index = (index + 1) % len(data_list)
                 clip_dir, class_idx = data_list[index]
+                clip_dir = os.path.splitext(clip_dir)[0] + '.npy'
+                if secondary_data_list != None: #using hybrid-DMD
+                    second_clip_dir, _ = secondary_data_list[index]
+                    second_clip_dir = os.path.splitext(second_clip_dir)[0] + '.npy'
+                    
             clip_data = np.load(clip_dir)
             if secondary_data_list != None: #using hybrid-DMD
                 second_data = np.load(second_clip_dir)
