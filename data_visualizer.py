@@ -34,7 +34,7 @@ def of_to_video(array, window_name='data'):
 if __name__ == '__main__':
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
-    dmd_dir = os.path.join(data_dir,'MrDMD_data')
+    dmd_dir = os.path.join(data_dir,'DMD_data')
     of_dir = os.path.join(data_dir,'OF_data')
     list_dir = os.path.join(data_dir,'ucfTrainTestlist')
     
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     of_train_data, of_test_data, class_index = get_data_list(list_dir, of_dir)
     of_gen = sequence_generator(of_train_data,1,of_shape,num_classes)
     '''
-    video = 'train\\ApplyEyeMakeup\\v_ApplyEyeMakeup_g08_c01.npy'
+    video = 'test\\BabyCrawling\\v_BabyCrawling_g04_c03.npy'
     modes = np.load(os.path.join(dmd_dir, video))
     flow = np.load(os.path.join(of_dir, video))
     #modes = np.reshape(modes, (216,216,4,6))
