@@ -44,12 +44,12 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
         print(model.summary())
 
         print('Start fitting model')
-        for i in range(5):
+        for i in range(1):
             # regenerate data
-            cwd = os.getcwd()
+            '''cwd = os.getcwd()
             data_dir = os.path.join(cwd,'data')
             list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
-            UCF_dir = os.path.join(data_dir, 'UCF-101')
+            UCF_dir = os.path.join(data_dir, 'UCF-101')'''
             regenerate_data(data_dir, list_dir, UCF_dir,temporal='DMD',random=True, window_size=window_size)
             
             checkpointer = keras.callbacks.ModelCheckpoint(weights_dir, save_best_only=True, save_weights_only=True)
