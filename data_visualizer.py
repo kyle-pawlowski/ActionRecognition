@@ -37,23 +37,27 @@ if __name__ == '__main__':
     dmd_dir = os.path.join(data_dir,'DMD_data')
     of_dir = os.path.join(data_dir,'OF_data')
     list_dir = os.path.join(data_dir,'ucfTrainTestlist')
+    mrdmd_dir = os.path.join(data_dir, 'MrDMD_data')
     
-    '''
-    num_classes= 11
     
-    dmd_shape = (72,216,216,4)
+    num_classes= 101
+    
+    dmd_shape = (216,216,8)
     dmd_train_data, dmd_test_data, class_index = get_data_list(list_dir, dmd_dir)
+    mrdmd_train_data, mrdmd_test_data, class_index = get_data_list(list_dir,mrdmd_dir)
     dmd_gen = sequence_generator(dmd_train_data,1,dmd_shape,num_classes)
     
     of_shape = (76,216,216,2)
     of_train_data, of_test_data, class_index = get_data_list(list_dir, of_dir)
     of_gen = sequence_generator(of_train_data,1,of_shape,num_classes)
-    '''
+    
     video = 'test\\BabyCrawling\\v_BabyCrawling_g04_c03.npy'
     modes = np.load(os.path.join(dmd_dir, video))
     flow = np.load(os.path.join(of_dir, video))
     #modes = np.reshape(modes, (216,216,4,6))
     #modes = np.reshape(modes,(6,216,216,4))
-    of_to_video(modes,'dmd')
-    of_to_video(flow,'flow')
+    example = next(dmd_gen)[0]
+    #of_to_video(np.reshape(example,example.shape[1:]),'dmd')
+    of_to_video(modes)
+    #of_to_video(flow,'flow')
     
