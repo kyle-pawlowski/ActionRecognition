@@ -88,7 +88,7 @@ def sequence_generator(data_list, batch_size, input_shape, num_classes, secondar
                         new_secondary[:,:,j+offset] = second_data[:,:,j]
                         extra_frames -= 1
                 
-                clip_data = np.maximum(clip_data,new_secondary)
+                clip_data = np.maximum(clip_data,new_secondary*np.max(clip_data, axis=2)/np.max(new_secondary, axis=2))
                 
             batch_x[i] = clip_data
         yield batch_x, batch_y
