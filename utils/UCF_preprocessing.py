@@ -47,7 +47,7 @@ def process_frame(frame, img_size, x, y, mean=None, normalization=True, flip=Tru
 
 # down sample image resolution to 216*216, and make sequence length 10
 def process_clip(src_dir, dst_dir, seq_len, img_size, mean=None, normalization=True,
-                 horizontal_flip=True, random_crop=True, consistent=True, continuous_seq=False):
+                 horizontal_flip=True, random_crop=True, consistent=True, continuous_seq=False, list_dir=None):
     all_frames = []
     cap = cv2.VideoCapture(src_dir)
     while cap.isOpened():
@@ -64,8 +64,15 @@ def process_clip(src_dir, dst_dir, seq_len, img_size, mean=None, normalization=T
         np.save(dst_dir, all_frames)
     else:
         clip_length = len(all_frames)
-        if clip_length <= 20:
+        if clip_length <= seq_len:
             print(src_dir, ' has no enough frames')
+            with open(list_dir,'r') as file_list:
+                files = file_list.readlines()
+            with open(list_dir,'w') as file_list:
+                for file in files:
+                    if file[:-1] not in src_dir:
+                        file_list.write(file)
+            return
         step_size = int(clip_length / (seq_len + 1))
         frame_sequence = []
         # select random first frame index for continuous sequence
@@ -142,17 +149,23 @@ def preprocessing(list_dir, UCF_dir, dest_dir, seq_len, img_size, overwrite=Fals
 
     print('Preprocessing UCF data ...')
     for clip_list, sub_dir in [(trainlist, train_dir), (testlist, test_dir)]:
+        isTest=False
         for clip in clip_list:
             clip_name = os.path.basename(clip)
             clip_category = os.path.dirname(clip)
             category_dir = os.path.join(sub_dir, clip_category)
             src_dir = os.path.join(UCF_dir, clip)
             dst_dir = os.path.join(category_dir, clip_name)
+            if isTest:
+                clip_list_dir = os.path.join(list_dir,'testlist.txt')
+            else:
+                clip_list_dir = os.path.join(list_dir,'trainlist.txt')
             # print(dst_dir)
             if not os.path.exists(category_dir):
                 os.mkdir(category_dir)
             process_clip(src_dir, dst_dir, seq_len, img_size, mean=mean, normalization=normalization, horizontal_flip=horizontal_flip,
-                         random_crop=random_crop, consistent=consistent, continuous_seq=continuous_seq)
+                         random_crop=random_crop, consistent=consistent, continuous_seq=continuous_seq, list_dir=clip_list_dir)
+        isTest=True
     print('Preprocessing done ...')
 
 
