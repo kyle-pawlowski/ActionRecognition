@@ -109,7 +109,12 @@ def _compute_dmd(frames, svd_rank):
     #print("input is inf: " + str(np.isinf(vec_frames ).any()))
     vec_frames /= 255.
     #vec_frames = np.where(vec_frames==0,1,vec_frames)
-    dmd.fit(np.nan_to_num(vec_frames.T,posinf=255,neginf=1))
+    try:
+        dmd.fit(np.nan_to_num(vec_frames.T,posinf=255,neginf=1))
+    except np.linalg.LinAlgError:
+        print('Encountered error in DMD. Input was: ')
+        print(vec_frames.T)
+        exit(1)
     modes = dmd.modes.real
     return modes
  
