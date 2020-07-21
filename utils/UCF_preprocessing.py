@@ -53,6 +53,7 @@ def process_clip(src_dir, dst_dir, seq_len, img_size, mean=None, normalization=T
     while cap.isOpened():
         succ, frame = cap.read()
         if not succ:
+            print('Not able to open file: ' + str(src_dir))
             break
         # append frame that is not all zeros
         if frame.any():
@@ -96,6 +97,9 @@ def process_clip(src_dir, dst_dir, seq_len, img_size, mean=None, normalization=T
             if horizontal_flip and not consistent:
                 flip = random.randrange(2) == 1
             if random_crop and consistent and not xy_set:
+                if(frame.shape[0]-img_size[0] < 1):
+                    print('frame.shape[0] was ' + str(frame.shape[0]))
+                    print('img_size[0] was ' + str(img_size[0]))
                 x = random.randrange(frame.shape[0]-img_size[0])
                 y = random.randrange(frame.shape[1]-img_size[1])
                 xy_set = True
