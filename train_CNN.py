@@ -24,7 +24,7 @@ class LockedIterator(object):
         finally:
             self.lock.release()
 
-def fit_model(model, train_data, test_data, weights_dir, input_shape, dataset='ucf' optical_flow=False):
+def fit_model(model, train_data, test_data, weights_dir, input_shape, dataset='ucf', optical_flow=False):
     try:
         # using sequence or image_from_sequnece generator
         if 'hmdb' in dataset.lower():
