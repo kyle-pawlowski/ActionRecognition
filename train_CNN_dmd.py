@@ -23,12 +23,17 @@ class LockedIterator(object):
         finally:
             self.lock.release()
 
-def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False, window_size=3, secondary=(None,None)):
+def fit_model(model, train_data, test_data, weights_dir, input_shape, dataset='ucf',optical_flow=False, window_size=3, secondary=(None,None)):
     try:
         # using sequence or image_from_sequnece generator
+        if 'hmdb' in dataset.lower():
+            num_classes=51
+        else:
+            num_classes=101
+            
         if optical_flow:
-            train_generator = LockedIterator(sequence_generator(train_data, BatchSize, input_shape, N_CLASSES, secondary_data_list=secondary[0]))
-            test_generator = LockedIterator(sequence_generator(test_data, BatchSize, input_shape, N_CLASSES,secondary_data_list=secondary[1]))
+            train_generator = LockedIterator(sequence_generator(train_data, BatchSize, input_shape,num_classes, secondary_data_list=secondary[0]))
+            test_generator = LockedIterator(sequence_generator(test_data, BatchSize, input_shape, num_classes,secondary_data_list=secondary[1]))
         else:
             train_generator = LockedIterator(image_from_sequence_generator(train_data, BatchSize, (6,)+input_shape, N_CLASSES))
             test_generator = LockedIterator(image_from_sequence_generator(test_data, BatchSize, (6,)+input_shape, N_CLASSES))
@@ -72,7 +77,7 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
 
 if __name__ == '__main__':
     
-    dataset = 'ucf'
+    dataset = 'hmdb'
     window_size = 3
     multitasking = False
     hybrid=False
@@ -123,4 +128,4 @@ if __name__ == '__main__':
                   optical_flow=True,window_size=window_size, secondary=(mrtrain_data,mrtest_data))
     else:
         fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, 
-                  optical_flow=True,window_size=window_size)
+                  optical_flow=True,window_size=window_size, dataset=dataset)

@@ -138,26 +138,26 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
     ucf_fc6.trainable = not multitask or not for_hmdb
     ucf = ucf_fc6(ucf)
     if is_training: 
-        ucf = Dropout(0)(ucf)
+        ucf = Dropout(0.5)(ucf)
     
     if multitask:
         hmdb = Flatten()(x)
         hmdb_fc8 = Dense(4096, activation='relu', name='tmp_fc8')
         hmdb_fc8.trainable = for_hmdb
         hmdb = hmdb_fc8(hmdb)
-        hmdb = Dropout(0)(hmdb)
+        hmdb = Dropout(0.5)(hmdb)
         
     ucf_fc7 = Dense(2048, activation='relu', name='tmp_fc7')
     ucf_fc7.trainable = not multitask or not for_hmdb
     ucf = ucf_fc7(ucf)
     if is_training:
-        ucf = Dropout(0)(ucf)
+        ucf = Dropout(0.5)(ucf)
     
     if multitask:
         hmdb_fc9 = Dense(2048, activation='relu', name='tmp_fc9')
         hmdb_fc9.trainable = for_hmdb
         hmdb = hmdb_fc9(hmdb)
-        hmdb = Dropout(0)(hmdb)
+        hmdb = Dropout(0.5)(hmdb)
 
     if include_top:
         ucf_fc101 = Dense(ucf_classes, activation='softmax', name='tmp_fc101')
