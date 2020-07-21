@@ -114,7 +114,7 @@ def _compute_dmd(frames, svd_rank):
     except np.linalg.LinAlgError:
         print('Encountered error in DMD. Input was: ')
         print(vec_frames.T)
-        exit(1)
+        return np.zeros((frames.shape[1]*frames.shape[2],1))
     modes = dmd.modes.real
     return modes
  
