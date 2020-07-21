@@ -63,7 +63,7 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
         hmdb = Flatten()(x)
         hmdb = Dense(4096, activation='relu', name='tmp_fc8')(hmdb)
         if is_training:
-            hmdb = Dropout(0)(hmdb)
+            hmdb = Dropout(0.5)(hmdb)
 
     ucf = Dense(2048, activation='relu', name='tmp_fc7')(ucf)
     if is_training:   
@@ -72,7 +72,7 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
     if multitask:
         hmdb = Dense(2048, activation='relu', name='tmp_fc9')(hmdb)
         if is_training:
-            hmdb = Dropout(0)(hmdb)
+            hmdb = Dropout(0.5)(hmdb)
 
     if include_top:
         ucf = Dense(ucf_classes, activation='softmax', name='tmp_fc101')(ucf)
