@@ -72,10 +72,13 @@ if __name__ == '__main__':
     dataset = 'ucf'
     window_size = 8
     sequence_length = 16
+    multitasking=False
     if len(sys.argv) > 1:
         dataset = sys.argv[1]
-    if len(sys.argv) > 2:
-        window_size = int(sys.argv[2])
+        if len(sys.argv) > 2:
+            window_size = int(sys.argv[2])
+            if len(sys.argv)>3:
+                multitasking = int(sys.argv[3])
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
     if 'hmdb' in dataset.lower():
@@ -102,5 +105,5 @@ if __name__ == '__main__':
     video_dir = os.path.join(data_dir, 'MrDMD_data')
     input_shape = (216,216,sequence_length-window_size+1)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
-    model = mrdmd_CNN(input_shape, N_CLASSES, dmd_weights_dir, include_top=True)
+    model = mrdmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, multitask= multitasking, for_hmdb=('hmdb' in dataset.lower()))
     fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=True)
