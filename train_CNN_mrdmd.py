@@ -22,12 +22,16 @@ class LockedIterator(object):
         finally:
             self.lock.release()
 
-def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_flow=False):
+def fit_model(model, train_data, test_data, weights_dir, input_shape, dataset='ucf', optical_flow=False):
     try:
+        if 'hmdb' in dataset.lower():
+            num_classes = 51
+        else:
+            num_classes = 101
         # using sequence or image_from_sequnece generator
         if optical_flow:
-            train_generator = LockedIterator(sequence_generator(train_data, BatchSize, input_shape, N_CLASSES))
-            test_generator = LockedIterator(sequence_generator(test_data, BatchSize, input_shape, N_CLASSES))
+            train_generator = LockedIterator(sequence_generator(train_data, BatchSize, input_shape,num_classes))
+            test_generator = LockedIterator(sequence_generator(test_data, BatchSize, input_shape, num_classes))
         else:
             train_generator = LockedIterator(image_from_sequence_generator(train_data, BatchSize, (5,)+input_shape, N_CLASSES))
             test_generator = LockedIterator(image_from_sequence_generator(test_data, BatchSize, (5,)+input_shape, N_CLASSES))
@@ -46,8 +50,14 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, optical_fl
         for i in range(3):
             cwd = os.getcwd()
             data_dir = os.path.join(cwd,'data')
-            list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
-            UCF_dir = os.path.join(data_dir, 'UCF-101')
+            
+            if 'hmdb' in dataset.lower():
+                list_dir = os.path.join(data_dir,'hmdb51_test_train_splits')
+                UCF_dir = os.path.join(data_dir, 'hmdb51_org')
+            else:
+                list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
+                UCF_dir = os.path.join(data_dir, 'UCF-101')
+            
             regenerate_data(data_dir, list_dir, UCF_dir,temporal='MrDMD',random=True)
 
             checkpointer = keras.callbacks.ModelCheckpoint(weights_dir, save_best_only=True, save_weights_only=True)
