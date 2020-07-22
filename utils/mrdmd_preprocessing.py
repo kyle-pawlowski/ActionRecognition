@@ -110,7 +110,10 @@ def _compute_dmd(frames):
     else:
         vec_frames = np.reshape(frames, (frames.shape[0], frames.shape[1]*frames.shape[2]))
     dmd = MrDMD(svd_rank=4, max_level=3, max_cycles=1)
-    dmd.fit(vec_frames.T)
+    try:
+        dmd.fit(vec_frames.T)
+    except np.linalg.LinAlgError:
+        return np.zeros(frames[1]*frames[2],1)
     modes = dmd.modes.real
     return modes
  
