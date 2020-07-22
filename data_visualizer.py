@@ -51,12 +51,12 @@ if __name__ == '__main__':
     of_train_data, of_test_data, class_index = get_data_list(list_dir, of_dir)
     of_gen = sequence_generator(of_train_data,1,of_shape,num_classes)
     
-    video = 'test\\BabyCrawling\\v_BabyCrawling_g04_c03.npy'
+    video = 'train\\swing_baseball\\BaseballSwingAnalysis_swing_baseball_u_nm_np1_fr_med_16.npy'
     modes = np.load(os.path.join(dmd_dir, video))
-    flow = np.load(os.path.join(of_dir, video))
+    #flow = np.load(os.path.join(of_dir, video))
     #modes = np.reshape(modes, (216,216,4,6))
     #modes = np.reshape(modes,(6,216,216,4))
-    example = next(dmd_gen)[0]
+    #example = next(dmd_gen)[0]
     #of_to_video(np.reshape(example,example.shape[1:]),'dmd')
     of_to_video(modes)
     #of_to_video(flow,'flow')
