@@ -53,33 +53,48 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     x = MaxPooling2D(pool_size=(2, 2),dim_ordering="tf")(x)
-
-    ucf = Flatten()(x)
-    ucf = Dense(4096, activation='relu', name='tmp_fc6')(ucf)
-    if is_training:
-        ucf = Dropout(0)(ucf)
+    
+    if multitask or not for_hmdb:
+        ucf = Flatten()(x)
+        ucf_fc6 = Dense(4096, activation='relu', name='tmp_fc6')
+        ucf_fc6.trainable = not for_hmdb
+        ucf = ucf_fc6(ucf)
+        if is_training:
+            ucf = Dropout(0)(ucf)
         
-    if multitask:
+    if multitask or for_hmdb:
         hmdb = Flatten()(x)
-        hmdb = Dense(4096, activation='relu', name='tmp_fc8')(hmdb)
+        hmdb_fc8 = Dense(4096, activation='relu', name='tmp_fc8')
+        hmdb_fc8.trainable = for_hmdb
+        hmdb = hmdb_fc8(hmdb)
         if is_training:
             hmdb = Dropout(0.5)(hmdb)
 
-    ucf = Dense(2048, activation='relu', name='tmp_fc7')(ucf)
-    if is_training:   
-        ucf = Dropout(0)(ucf)
+    if multitask or not for_hmdb:
+        ucf_fc7 = Dense(2048, activation='relu', name='tmp_fc7')
+        ucf_fc7.trainable = not for_hmdb
+        ucf = ucf_fc7(ucf)
+        if is_training:   
+            ucf = Dropout(0)(ucf)
     
-    if multitask:
-        hmdb = Dense(2048, activation='relu', name='tmp_fc9')(hmdb)
+    if multitask or for_hmdb:
+        hmdb_fc9 = Dense(2048, activation='relu', name='tmp_fc9')
+        hmdb_fc9.trainable = for_hmdb
+        hmdb = hmdb_fc9(hmdb)
         if is_training:
             hmdb = Dropout(0.5)(hmdb)
 
     if include_top:
-        ucf = Dense(ucf_classes, activation='softmax', name='tmp_fc101')(ucf)
-        if multitask:
-            hmdb = Dense(hmdb_classes, activation='softmax', name='tmp_fc51')(hmdb)
+        if multitask or not for_hmdb:
+            ucf_fc101 = Dense(ucf_classes, activation='softmax', name='tmp_fc101')
+            ucf_fc101.trainable = not for_hmdb
+            ucf = ucf_fc101(ucf)
+        if multitask or for_hmdb:
+            hmdb_fc51 = Dense(hmdb_classes, activation='softmax', name='tmp_fc51')
+            hmdb_fc51.trainable = for_hmdb
+            hmdb = hmdb_fc51(hmdb)
         
-    if not multitask or not for_hmdb:
+    if not for_hmdb:
         model = Model(inputs=optical_flow_input, outputs=ucf, name='temporal_CNN')
     else:
         model = Model(inputs=optical_flow_input, outputs=hmdb, name='temporal_CNN')
@@ -133,42 +148,45 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
     x = Activation('relu')(x)
     x = MaxPooling2D(pool_size=(2, 2),dim_ordering="tf")(x)
 
-    ucf = Flatten()(x)
-    ucf_fc6 = Dense(4096, activation='relu', name='tmp_fc6')
-    ucf_fc6.trainable = not multitask or not for_hmdb
-    ucf = ucf_fc6(ucf)
-    if is_training: 
-        ucf = Dropout(0)(ucf)
+    if multitask or not for_hmdb:
+        ucf = Flatten()(x)
+        ucf_fc6 = Dense(4096, activation='relu', name='tmp_fc6')
+        ucf_fc6.trainable = not multitask or not for_hmdb
+        ucf = ucf_fc6(ucf)
+        if is_training: 
+            ucf = Dropout(0)(ucf)
     
-    if multitask:
+    if multitask or for_hmdb:
         hmdb = Flatten()(x)
         hmdb_fc8 = Dense(4096, activation='relu', name='tmp_fc8')
         hmdb_fc8.trainable = for_hmdb
         hmdb = hmdb_fc8(hmdb)
         hmdb = Dropout(0.5)(hmdb)
-        
-    ucf_fc7 = Dense(2048, activation='relu', name='tmp_fc7')
-    ucf_fc7.trainable = not multitask or not for_hmdb
-    ucf = ucf_fc7(ucf)
-    if is_training:
-        ucf = Dropout(0)(ucf)
     
-    if multitask:
+    if multitask or not for_hmdb:
+        ucf_fc7 = Dense(2048, activation='relu', name='tmp_fc7')
+        ucf_fc7.trainable = not multitask or not for_hmdb
+        ucf = ucf_fc7(ucf)
+        if is_training:
+            ucf = Dropout(0)(ucf)
+    
+    if multitask or for_hmdb:
         hmdb_fc9 = Dense(2048, activation='relu', name='tmp_fc9')
         hmdb_fc9.trainable = for_hmdb
         hmdb = hmdb_fc9(hmdb)
         hmdb = Dropout(0.5)(hmdb)
 
     if include_top:
-        ucf_fc101 = Dense(ucf_classes, activation='softmax', name='tmp_fc101')
-        ucf_fc101.trainable = not multitask or not for_hmdb
-        ucf = ucf_fc101(ucf)
-        if multitask:
+        if multitask or not for_hmdb:
+            ucf_fc101 = Dense(ucf_classes, activation='softmax', name='tmp_fc101')
+            ucf_fc101.trainable = not multitask or not for_hmdb
+            ucf = ucf_fc101(ucf)
+        if multitask or for_hmdb:
             hmdb_fc51 = Dense(hmdb_classes, activation='softmax', name='tmp_fc51')
             hmdb_fc51.trainable = for_hmdb
             hmdb = hmdb_fc51(hmdb)
             
-    if not multitask or not for_hmdb:
+    if not for_hmdb:
         model = Model(inputs=dmd_input, outputs=ucf, name='temporal_CNN')
     else:
         model = Model(inputs=dmd_input, outputs=hmdb,name='temporal_CNN')
@@ -221,36 +239,49 @@ def mrdmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=Fal
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     x = MaxPooling2D(pool_size=(2, 2),dim_ordering="tf")(x)
-
-    ucf = Flatten()(x)
-    ucf = Dense(4096, activation='relu', name='tmp_fc6')(ucf)
-    if is_training:
-        ucf = Dropout(0)(ucf)
-        
-    if multitask:
+    
+    if multitask or not for_hmdb:
+        ucf = Flatten()(x)
+        ucf_fc6 = Dense(4096, activation='relu', name='tmp_fc6')
+        ucf_fc6.trainable = not multitask or not for_hmdb
+        ucf = ucf_fc6(ucf)
+        if is_training: 
+            ucf = Dropout(0)(ucf)
+    
+    if multitask or for_hmdb:
         hmdb = Flatten()(x)
-        hmdb = Dense(4096, activation='relu', name='tmp_fc8')(hmdb)
+        hmdb_fc8 = Dense(4096, activation='relu', name='tmp_fc8')
+        hmdb_fc8.trainable = for_hmdb
+        hmdb = hmdb_fc8(hmdb)
+        hmdb = Dropout(0)(hmdb)
+    
+    if multitask or not for_hmdb:
+        ucf_fc7 = Dense(2048, activation='relu', name='tmp_fc7')
+        ucf_fc7.trainable = not multitask or not for_hmdb
+        ucf = ucf_fc7(ucf)
         if is_training:
-            hmdb = Dropout(0.5)(hmdb)
-
-    ucf = Dense(2048, activation='relu', name='tmp_fc7')(ucf)
-    if is_training:
-        ucf = Dropout(0)(ucf)
-        
-    if multitask:
-        hmdb = Dense(2048, activation='relu', name='tmp_fc9')(hmdb)
-        if is_training:
-            hmdb = Dropout(0.5)(hmdb)
+            ucf = Dropout(0)(ucf)
+    
+    if multitask or for_hmdb:
+        hmdb_fc9 = Dense(2048, activation='relu', name='tmp_fc9')
+        hmdb_fc9.trainable = for_hmdb
+        hmdb = hmdb_fc9(hmdb)
+        hmdb = Dropout(0)(hmdb)
 
     if include_top:
-        ucf = Dense(ucf_classes, activation='softmax', name='tmp_fc101')(ucf)
-        if multitask:
-            hmdb = Dense(hmdb_classes, activation='softmax', name='tmp_fc51')(hmdb)
-    
-    if not multitask or not for_hmdb:
-        model = Model(inputs=optical_flow_input, outputs=ucf, name='temporal_CNN')
+        if multitask or not for_hmdb:
+            ucf_fc101 = Dense(ucf_classes, activation='softmax', name='tmp_fc101')
+            ucf_fc101.trainable = not multitask or not for_hmdb
+            ucf = ucf_fc101(ucf)
+        if multitask or for_hmdb:
+            hmdb_fc51 = Dense(hmdb_classes, activation='softmax', name='tmp_fc51')
+            hmdb_fc51.trainable = for_hmdb
+            hmdb = hmdb_fc51(hmdb)
+            
+    if not for_hmdb:
+        model = Model(inputs=dmd_input, outputs=ucf, name='temporal_CNN')
     else:
-        model = Model(inputs=optical_flow_input, outputs=hmdb, name='temporal_CNN')
+        model = Model(inputs=dmd_input, outputs=hmdb,name='temporal_CNN')
 
     if os.path.exists(weights_dir):
         model.load_weights(weights_dir, by_name=True)
