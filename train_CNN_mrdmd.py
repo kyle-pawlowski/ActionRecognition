@@ -105,5 +105,5 @@ if __name__ == '__main__':
     video_dir = os.path.join(data_dir, 'MrDMD_data')
     input_shape = (216,216,sequence_length-window_size+1)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
-    model = mrdmd_CNN(input_shape, N_CLASSES, dmd_weights_dir, include_top=True, multitask= multitasking, for_hmdb=('hmdb' in dataset.lower()))
+    model = mrdmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, multitask= multitasking, for_hmdb=('hmdb' in dataset.lower()))
     fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, optical_flow=True)
