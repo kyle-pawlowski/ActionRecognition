@@ -211,7 +211,7 @@ def mrdmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=Fal
     else:
         ucf_classes = classes
         
-    optical_flow_input = Input(shape=input_shape)
+    dmd_input = Input(shape=input_shape)
 
     x = Convolution2D(96, kernel_size=(7, 7), strides=(2, 2), padding='same', name='tmp_conv1')(optical_flow_input)
     x = BatchNormalization(axis=3)(x)
