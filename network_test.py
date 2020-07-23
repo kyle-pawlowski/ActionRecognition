@@ -14,6 +14,7 @@ import numpy as np
 from models.temporal_CNN import temporal_CNN, dmd_CNN, mrdmd_CNN
 from utils.UCF_utils import sequence_generator, get_data_list
 from utils.dmd_preprocessing import _stack_dmd
+from utils.mrdmd_preprocessing import _stack_mrdmd
 from utils.OF_utils import stack_optical_flow
 N_CLASSES = 101
     
@@ -38,6 +39,8 @@ def pipeline_test(model, test_data, data_type, window_size=3):
     for example, datay in test_data:
         example = os.path.splitext(example)[0] + '.npy'
         datax = np.load(example)
+        if 'mrdmd' in data_type.lower():
+            processed = _stack_mrdmd(datax, window_size, -1, deeper=False, condensed=True)
         if 'dmd' in data_type.lower():
             processed = _stack_dmd(datax,window_size,-1,deeper=False,condensed=True)
         else:
