@@ -14,7 +14,7 @@ import numpy as np
 from models.temporal_CNN import temporal_CNN, dmd_CNN, mrdmd_CNN
 from utils.UCF_utils import sequence_generator, get_data_list
 from utils.dmd_preprocessing import _stack_dmd
-from utils.mrdmd_preprocessing import _stack_mrdmd as _stack_mrdmd
+from utils.mrdmd_preprocessing import _stack_dmd as _stack_mrdmd
 from utils.OF_utils import stack_optical_flow
 N_CLASSES = 101
     
