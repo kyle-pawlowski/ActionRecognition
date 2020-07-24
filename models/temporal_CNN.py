@@ -41,13 +41,13 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     if is_training:   
-        x = Dropout(0.75)(x)
+        x = Dropout(0.5)(x)
 
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv4')(x)
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     if is_training:
-        x = Dropout(0.75)(x)
+        x = Dropout(0.5)(x)
 
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv5')(x)
     x = BatchNormalization(axis=3)(x)
@@ -68,7 +68,7 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
         hmdb_fc8.trainable = for_hmdb
         hmdb = hmdb_fc8(hmdb)
         if is_training:
-            hmdb = Dropout(0.9)(hmdb)
+            hmdb = Dropout(0.75)(hmdb)
 
     if multitask or not for_hmdb:
         ucf_fc7 = Dense(2048, activation='relu', name='tmp_fc7')
@@ -82,7 +82,7 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
         hmdb_fc9.trainable = for_hmdb
         hmdb = hmdb_fc9(hmdb)
         if is_training:
-            hmdb = Dropout(0.9)(hmdb)
+            hmdb = Dropout(0.75)(hmdb)
 
     if include_top:
         if multitask or not for_hmdb:
