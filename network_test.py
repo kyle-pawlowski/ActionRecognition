@@ -33,12 +33,12 @@ def test_dmd(model, test_data):
         total += BatchSize
     print('accuracy: ' + str(num_correct*100/total))
     
-def pipeline_test(model, test_data, data_type, class_index, window_size=3):
+def pipeline_test(model, test_data, data_type, class_index, num_classes=101, window_size=3):
     correct = 0
     total = 0
     start_time = time.time()
-    correct_cats = np.zeros((N_CLASSES,))
-    total_cats = np.zeros((N_CLASSES,))
+    correct_cats = np.zeros((num_classes,))
+    total_cats = np.zeros((num_classes,))
     for example, datay in test_data:
         example = os.path.splitext(example)[0] + '.npy'
         datax = np.load(example)
@@ -98,7 +98,10 @@ if __name__ == '__main__':
         
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
-    list_dir = os.path.join(data_dir,'ucfTrainTestlist')
+    if 'hmdb' in dataset.lower():
+        list_dir = os.path.join(data_dir, 'hmdb51_test_train_list')
+    else:
+        list_dir = os.path.join(data_dir,'ucfTrainTestlist')
     weights_dir = os.path.join(cwd,'models')
     weights_dir = os.path.join(weights_dir, weights_name)
     if 'mrdmd' in datatype.lower():
