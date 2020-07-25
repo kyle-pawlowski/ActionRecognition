@@ -106,7 +106,7 @@ if __name__ == '__main__':
         input_shape= (216, 216, sequence_length-window_size+1)
         model = mrdmd_CNN(input_shape, (N_CLASSES, 51), weights_dir, include_top=True, is_training=False, multitask=multitask,for_hmdb=('hmdb' in dataset.lower()))
     elif 'of' in datatype.lower():
-        video_dir = os.path.join(data_dir,'UCF-Preprocessed-OF')
+        video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
         input_shape = (216,216,2*sequence_length-2)
         model = temporal_CNN(input_shape,(N_CLASSES, 51),weights_dir,include_top=True, is_training=False, multitask=multitask, for_hmdb=('hmdb' in dataset.lower()))
     else:
