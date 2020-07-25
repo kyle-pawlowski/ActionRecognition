@@ -57,6 +57,7 @@ def pipeline_test(model, test_data, data_type, class_index, num_classes=101, win
             correct_cats[datay-1] += 1
         total+=1
         total_cats[datay-1] += 1
+        break
     time_taken = time.time()-start_time
     np.where(total_cats==0, 1, total_cats)
     correct_cats = correct_cats / total_cats
@@ -71,7 +72,7 @@ def pipeline_test(model, test_data, data_type, class_index, num_classes=101, win
     plt.title('Accuracy by Class')
     plt.xticks(x_pos, x)
     plt.setp(plt.gca().get_xticklabels(), rotation=90, horizontalalignment='right')
-    plt.rc('xtick', labelsize=0.05)
+    plt.rc('xtick', labelsize=0.4)
     
     print('Test Accuracy: ' + str(correct*100/total))
     print('It took ' + str(time_taken/60) + ' minutes to test on ' + str(total) + ' sequences!')
