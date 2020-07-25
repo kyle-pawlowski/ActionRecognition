@@ -71,7 +71,7 @@ def pipeline_test(model, test_data, data_type, class_index, num_classes=101, win
     plt.title('Accuracy by Class')
     plt.xticks(x_pos, x)
     plt.setp(plt.gca().get_xticklabels(), rotation=90, horizontalalignment='right')
-    plt.rc('xtick', labelsize=0.2)
+    plt.rc('xtick', labelsize=0.05)
     
     print('Test Accuracy: ' + str(correct*100/total))
     print('It took ' + str(time_taken/60) + ' minutes to test on ' + str(total) + ' sequences!')
