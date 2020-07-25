@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.misc
 import os, cv2, random
+import sys
 import shutil
 import scipy.misc
 import time
@@ -265,12 +266,19 @@ if __name__ == '__main__':
     '''
         extract frames from videos as npy files
     '''
+    dataset = 'ucf'
+    if len(sys.argv) > 1:
+        dataset = sys.argv[1]
     sequence_length = 16
     image_size = (216, 216, 3)
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
-    list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
-    UCF_dir = os.path.join(data_dir, 'UCF-101')
+    if 'hmdb' in dataset.lower():
+        list_dir = os.path.join(data_dir, 'hmdb51_test_train_splits')
+        UCF_dir = os.path.join(data_dir,'hmdb51_org')
+    else:
+        list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
+        UCF_dir = os.path.join(data_dir, 'UCF-101')
     frames_dir = os.path.join(data_dir, 'frames/mean.npy')
 
     # add index number to testlist file
