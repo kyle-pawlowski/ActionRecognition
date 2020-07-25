@@ -99,7 +99,7 @@ if __name__ == '__main__':
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
     if 'hmdb' in dataset.lower():
-        list_dir = os.path.join(data_dir, 'hmdb51_test_train_list')
+        list_dir = os.path.join(data_dir, 'hmdb51_test_train_splits')
     else:
         list_dir = os.path.join(data_dir,'ucfTrainTestlist')
     weights_dir = os.path.join(cwd,'models')
