@@ -83,12 +83,18 @@ if __name__ == '__main__':
     window_size = 3
     sequence_length =16
     weights_name = 'dmd_testing_21682.h5'
+    dataset='ucf'
+    multitask=False
     if len(sys.argv) > 1:
         datatype = sys.argv[1]
         if len(sys.argv) > 2:
-              window_size = int(sys.argv[2])
-              if len(sys.argv) >3:
-                  weights_name = sys.argv[3]
+            dataset = sys.argv[2]
+            if len(sys.argv) > 3:
+                  window_size = int(sys.argv[3])
+                  if len(sys.argv) > 4:
+                      multitask = int(sys.argv[4])
+                      if len(sys.argv) >5:
+                          weights_name = sys.argv[5]
         
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
@@ -98,15 +104,15 @@ if __name__ == '__main__':
     if 'mrdmd' in datatype.lower():
         video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
         input_shape= (216, 216, sequence_length-window_size+1)
-        model = mrdmd_CNN(input_shape, N_CLASSES, weights_dir, include_top=True, is_training=True, multitask=False,for_hmdb=False)
+        model = mrdmd_CNN(input_shape, (N_CLASSES, 51), weights_dir, include_top=True, is_training=False, multitask=multitask,for_hmdb=('hmdb' in dataset.lower()))
     elif 'of' in datatype.lower():
         video_dir = os.path.join(data_dir,'UCF-Preprocessed-OF')
         input_shape = (216,216,2*sequence_length-2)
-        model = temporal_CNN(input_shape,N_CLASSES,weights_dir,include_top=True, is_training=False)
+        model = temporal_CNN(input_shape,(N_CLASSES, 51),weights_dir,include_top=True, is_training=False, multitask=multitask, for_hmdb=('hmdb' in dataset.lower()))
     else:
         video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
         input_shape = (216,216,sequence_length-window_size+1)
-        model = dmd_CNN(input_shape, (N_CLASSES,51), weights_dir, include_top=True, multitask=False,for_hmdb=False, is_training=False)
+        model = dmd_CNN(input_shape, (N_CLASSES,51), weights_dir, include_top=True, multitask=multitask,for_hmdb=('hmdb' in dataset.lower()), is_training=False)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     
     #test_dmd(model,test_data)
