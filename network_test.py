@@ -10,6 +10,7 @@ import time
 
 import keras
 import numpy as np
+import matplotlib.pyplot as plt
 
 from models.temporal_CNN import temporal_CNN, dmd_CNN, mrdmd_CNN
 from utils.UCF_utils import sequence_generator, get_data_list
@@ -32,10 +33,12 @@ def test_dmd(model, test_data):
         total += BatchSize
     print('accuracy: ' + str(num_correct*100/total))
     
-def pipeline_test(model, test_data, data_type, window_size=3):
+def pipeline_test(model, test_data, data_type, class_index, window_size=3):
     correct = 0
     total = 0
     start_time = time.time()
+    correct_cats = np.zeros((N_CLASSES,))
+    total_cats = np.zeros((N_CLASSES,))
     for example, datay in test_data:
         example = os.path.splitext(example)[0] + '.npy'
         datax = np.load(example)
@@ -51,16 +54,33 @@ def pipeline_test(model, test_data, data_type, window_size=3):
         answer = np.equal(answer,maximum)
         if answer[0,datay-1] == 1:
             correct+=1
+            correct_cats[datay-1] += 1
         total+=1
+        total_cats[datay-1] += 1
     time_taken = time.time()-start_time
+    np.where(total_cats==0, 1, total_cats)
+    correct_cats = correct_cats / total_cats
+    
+    #make graph
+    plt.style.use('ggplot')
+    x = list(class_index.keys())
+    x_pos = range(correct_cats.shape[0])
+    plt.bar(x_pos, correct_cats, color='pink')
+    plt.xlabel('Category')
+    plt.ylabel('% Correct')
+    plt.title('Accuracy by Class')
+    plt.xticks(x_pos, x)
+    plt.setp(plt.gca().get_xticklabels(), rotation=90, horizontalalignment='right')
+    
     print('Test Accuracy: ' + str(correct*100/total))
     print('It took ' + str(time_taken/60) + ' minutes to test on ' + str(total) + ' sequences!')
+    plt.show()
         
 if __name__ == '__main__':
     datatype = 'dmd'
-    window_size = 5
+    window_size = 3
     sequence_length =16
-    weights_name = 'dmd_cnn_window.h5'
+    weights_name = 'dmd_testing_21682.h5'
     if len(sys.argv) > 1:
         datatype = sys.argv[1]
         if len(sys.argv) > 2:
@@ -78,7 +98,6 @@ if __name__ == '__main__':
         input_shape= (216, 216, sequence_length-window_size+1)
         model = mrdmd_CNN(input_shape, N_CLASSES, weights_dir, include_top=True, is_training=True, multitask=False,for_hmdb=False)
     elif 'of' in datatype.lower():
-        sequence_length=10
         video_dir = os.path.join(data_dir,'UCF-Preprocessed-OF')
         input_shape = (216,216,2*sequence_length-2)
         model = temporal_CNN(input_shape,N_CLASSES,weights_dir,include_top=True, is_training=False)
@@ -89,4 +108,4 @@ if __name__ == '__main__':
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     
     #test_dmd(model,test_data)
-    pipeline_test(model,test_data,datatype, window_size=window_size)
+    pipeline_test(model,test_data,datatype, class_index, window_size=window_size)
