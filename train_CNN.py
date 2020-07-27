@@ -50,7 +50,7 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, dataset='u
         print(model.summary())
 
         print('Start fitting model')
-        for i in range(3):
+        for i in range(2):
             cwd = os.getcwd()
             data_dir = os.path.join(cwd,'data')
             if 'hmdb' in dataset.lower():
