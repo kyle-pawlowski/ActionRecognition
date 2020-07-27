@@ -41,13 +41,13 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     if is_training:   
-        x = Dropout(0.5)(x)
+        x = Dropout(0)(x)
 
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv4')(x)
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     if is_training:
-        x = Dropout(0.5)(x)
+        x = Dropout(0)(x)
 
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv5')(x)
     x = BatchNormalization(axis=3)(x)
@@ -68,7 +68,7 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
         hmdb_fc8.trainable = for_hmdb
         hmdb = hmdb_fc8(hmdb)
         if is_training:
-            hmdb = Dropout(0.75)(hmdb)
+            hmdb = Dropout(0)(hmdb)
 
     if multitask or not for_hmdb:
         ucf_fc7 = Dense(2048, activation='relu', name='tmp_fc7')
@@ -82,7 +82,7 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
         hmdb_fc9.trainable = for_hmdb
         hmdb = hmdb_fc9(hmdb)
         if is_training:
-            hmdb = Dropout(0.75)(hmdb)
+            hmdb = Dropout(0)(hmdb)
 
     if include_top:
         if multitask or not for_hmdb:
@@ -151,7 +151,7 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
     if multitask or not for_hmdb:
         ucf = Flatten()(x)
         ucf_fc6 = Dense(4096, activation='relu', name='tmp_fc6')
-        ucf_fc6.trainable = not multitask or not for_hmdb
+        ucf_fc6.trainable = not for_hmdb
         ucf = ucf_fc6(ucf)
         if is_training: 
             ucf = Dropout(0.9)(ucf)
@@ -165,7 +165,7 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
     
     if multitask or not for_hmdb:
         ucf_fc7 = Dense(2048, activation='relu', name='tmp_fc7')
-        ucf_fc7.trainable = not multitask or not for_hmdb
+        ucf_fc7.trainable = not for_hmdb
         ucf = ucf_fc7(ucf)
         if is_training:
             ucf = Dropout(0.9)(ucf)
@@ -179,7 +179,7 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
     if include_top:
         if multitask or not for_hmdb:
             ucf_fc101 = Dense(ucf_classes, activation='softmax', name='tmp_fc101')
-            ucf_fc101.trainable = not multitask or not for_hmdb
+            ucf_fc101.trainable = not for_hmdb
             ucf = ucf_fc101(ucf)
         if multitask or for_hmdb:
             hmdb_fc51 = Dense(hmdb_classes, activation='softmax', name='tmp_fc51')
@@ -243,7 +243,7 @@ def mrdmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=Fal
     if multitask or not for_hmdb:
         ucf = Flatten()(x)
         ucf_fc6 = Dense(4096, activation='relu', name='tmp_fc6')
-        ucf_fc6.trainable = not multitask or not for_hmdb
+        ucf_fc6.trainable = not for_hmdb
         ucf = ucf_fc6(ucf)
         if is_training: 
             ucf = Dropout(0.5)(ucf)
@@ -257,7 +257,7 @@ def mrdmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=Fal
     
     if multitask or not for_hmdb:
         ucf_fc7 = Dense(2048, activation='relu', name='tmp_fc7')
-        ucf_fc7.trainable = not multitask or not for_hmdb
+        ucf_fc7.trainable = not for_hmdb
         ucf = ucf_fc7(ucf)
         if is_training:
             ucf = Dropout(0.5)(ucf)
@@ -271,7 +271,7 @@ def mrdmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=Fal
     if include_top:
         if multitask or not for_hmdb:
             ucf_fc101 = Dense(ucf_classes, activation='softmax', name='tmp_fc101')
-            ucf_fc101.trainable = not multitask or not for_hmdb
+            ucf_fc101.trainable = not for_hmdb
             ucf = ucf_fc101(ucf)
         if multitask or for_hmdb:
             hmdb_fc51 = Dense(hmdb_classes, activation='softmax', name='tmp_fc51')
