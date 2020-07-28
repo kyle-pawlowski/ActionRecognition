@@ -109,7 +109,7 @@ def _compute_dmd(frames):
         vec_frames = np.reshape(frames, (frames.shape[0], frames.shape[1]*frames.shape[2]*frames.shape[3]))
     else:
         vec_frames = np.reshape(frames, (frames.shape[0], frames.shape[1]*frames.shape[2]))
-    dmd = MrDMD(svd_rank=4, max_level=3, max_cycles=1)
+    dmd = MrDMD(svd_rank=0, max_level=6, max_cycles=1)
     try:
         dmd.fit(vec_frames.T)
     except np.linalg.LinAlgError:
