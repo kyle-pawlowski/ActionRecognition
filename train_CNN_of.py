@@ -19,7 +19,6 @@ if __name__ == '__main__':
     else:
         list_dir = os.path.join(data_dir,'ucfTrainTestlist')
     
-    weights_dir = os.path.join('models')
     weights_dir = os.path.join(cwd,'models')
     old_weights_dir = os.path.join(weights_dir, 'temporal_cnn_42.h5')
     new_weights_dir = os.path.join(weights_dir, 'temporal_cnn_multitask.h5')
