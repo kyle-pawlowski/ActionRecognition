@@ -236,6 +236,8 @@ def regenerate_data(data_dir, list_dir, UCF_dir, temporal='OF',random=False, win
     if 'MrDMD' in temporal:
         dest_dir = os.path.join(data_dir,'UCF-Preprocessed-MrDMD')
         sequence_length = 16 
+    elif 'hybrid' in temporal.lower():
+        dest_dir = os.path.join(data_dir,'UCF-Preprocessed-HybridDMD')
     elif 'DMD' in temporal:
         dest_dir = os.path.join(data_dir,'UCF-Preprocessed-DMD')
     else:
@@ -253,6 +255,10 @@ def regenerate_data(data_dir, list_dir, UCF_dir, temporal='OF',random=False, win
         src_dir = os.path.join(data_dir,'UCF-Preprocessed-MrDMD')
         dest_dir = os.path.join(data_dir, 'MrDMD_data')
         mrdmd_prep(src_dir,dest_dir,8,-1,overwrite=True)
+    elif 'hybrid' in temporal:
+        src_dir = os.path.join(data_dir, 'UCF-Preprocessed-HybridDMD')
+        dest_dir = os.path.join(data_dir, 'HybridDMD_data')
+        mrdmd_prep(src_dir,dest_dir,8,-1,overwrite=True, hybrid=True)
     elif 'DMD' in temporal:
         src_dir = os.path.join(data_dir,'UCF-Preprocessed-DMD')
         dest_dir = os.path.join(data_dir,'DMD_data')

@@ -6,7 +6,7 @@ import shutil
 import warnings
 import cv2
 
-def mrdmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
+def mrdmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False, hybrid=False):
     train_dir = os.path.join(src_dir, 'train')
     test_dir = os.path.join(src_dir, 'test')
 
@@ -51,13 +51,13 @@ def mrdmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False):
                 file_dir = os.path.join(class_dir, filename)
                 frames = np.load(file_dir)
                 # note: store the final processed data with type of float16 to save storage
-                processed_data = _stack_dmd(frames, window, num_modes).astype(np.float16)
+                processed_data = _stack_dmd(frames, window, num_modes,hybrid=hybrid).astype(np.float16)
                 dest_file_dir = os.path.join(dest_class_dir, filename)
                 np.save(dest_file_dir, processed_data)
             # print('No.{} class {} finished, data saved in {}'.format(index, class_name, dest_class_dir))
  
 
-def _stack_dmd(frames, window, num_modes, grey=True, deeper=False, condensed=True):
+def _stack_dmd(frames, window, num_modes, grey=True, deeper=False, condensed=True, hybrid=False):
     if frames.dtype != np.float32:
         frames = frames.astype(np.float32)
         warnings.warn('Warning! The data type has been changed to np.float32 for graylevel conversion...')
@@ -71,7 +71,7 @@ def _stack_dmd(frames, window, num_modes, grey=True, deeper=False, condensed=Tru
         selection = frames[i:i+window]
         if grey:
             selection = np.array([cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY) for frame in selection])
-        mode = _compute_dmd(selection.astype(np.complex128))
+        mode = _compute_dmd(selection.astype(np.complex128), hybrid=hybrid)
         if modes is None or mode.shape[1]<num_modes: 
             num_modes = mode.shape[1]
             if condensed:
@@ -104,7 +104,7 @@ def _stack_dmd(frames, window, num_modes, grey=True, deeper=False, condensed=Tru
             modes[i] = mode
     return modes
 
-def _compute_dmd(frames):
+def _compute_dmd(frames, hybrid=False):
     if len(frames.shape) == 4:
         vec_frames = np.reshape(frames, (frames.shape[0], frames.shape[1]*frames.shape[2]*frames.shape[3]))
     else:
@@ -114,8 +114,25 @@ def _compute_dmd(frames):
         dmd.fit(vec_frames.T)
     except np.linalg.LinAlgError:
         return np.zeros(frames[1]*frames[2],1)
-    modes = dmd.modes.real
+    if hybrid:
+        modes = get_partial_modes(dmd,range(1,6))
+    else:
+        modes = dmd.modes.real
     return modes
+
+def get_partial_modes(dmd, levels):
+    modes = None
+    for level in levels:
+        try:
+            mode = dmd.get_partial_modes(level)
+        except:
+            continue
+        if modes is None:
+            modes = mode
+        else:
+            modes = np.maximum(modes,mode)
+    return modes
+            
  
 if __name__ == '__main__':
     sequence_length = 16

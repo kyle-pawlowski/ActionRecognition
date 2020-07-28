@@ -22,7 +22,7 @@ class LockedIterator(object):
         finally:
             self.lock.release()
 
-def fit_model(model, train_data, test_data, weights_dir, input_shape, dataset='ucf', optical_flow=False):
+def fit_model(model, train_data, test_data, weights_dir, input_shape, dataset='ucf', optical_flow=False, hybrid=False):
     try:
         if 'hmdb' in dataset.lower():
             num_classes = 51
@@ -58,7 +58,10 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, dataset='u
                 list_dir = os.path.join(data_dir, 'ucfTrainTestlist')
                 UCF_dir = os.path.join(data_dir, 'UCF-101')
             
-            regenerate_data(data_dir, list_dir, UCF_dir,temporal='MrDMD',random=True)
+            if hybrid:
+                regenerate_data(data_dir, list_dir, UCF_dir,temporal='Hybrid-DMD',random=True)
+            else:
+                regenerate_data(data_dir, list_dir, UCF_dir,temporal='MrDMD',random=True)
 
             checkpointer = keras.callbacks.ModelCheckpoint(weights_dir, save_best_only=True, save_weights_only=True)
             earlystopping = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.001, patience=20, verbose=2, mode='auto')
@@ -83,12 +86,15 @@ if __name__ == '__main__':
     window_size = 8
     sequence_length = 16
     multitasking=False
+    hybrid = True
     if len(sys.argv) > 1:
         dataset = sys.argv[1]
         if len(sys.argv) > 2:
             window_size = int(sys.argv[2])
             if len(sys.argv)>3:
                 multitasking = int(sys.argv[3])
+                if len(sys.argv)>4:
+                    hybrid = int(sys.argv[4])
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
     if 'hmdb' in dataset.lower():
@@ -116,4 +122,4 @@ if __name__ == '__main__':
     input_shape = (216,216,sequence_length-window_size+1)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     model = mrdmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, multitask= multitasking, for_hmdb=('hmdb' in dataset.lower()))
-    fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, dataset=dataset, optical_flow=True)
+    fit_model(model, train_data, test_data, dmd_weights_dir, input_shape, dataset=dataset, optical_flow=True, hybrid=hybrid)
