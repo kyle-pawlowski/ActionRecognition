@@ -161,7 +161,7 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
         hmdb_fc8 = Dense(4096, activation='relu', name='tmp_fc8')
         hmdb_fc8.trainable = for_hmdb
         hmdb = hmdb_fc8(hmdb)
-        hmdb = Dropout(0.75)(hmdb)
+        hmdb = Dropout(0.9)(hmdb)
     
     if multitask or not for_hmdb:
         ucf_fc7 = Dense(2048, activation='relu', name='tmp_fc7')
@@ -174,7 +174,7 @@ def dmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=False
         hmdb_fc9 = Dense(2048, activation='relu', name='tmp_fc9')
         hmdb_fc9.trainable = for_hmdb
         hmdb = hmdb_fc9(hmdb)
-        hmdb = Dropout(0.75)(hmdb)
+        hmdb = Dropout(0.9)(hmdb)
 
     if include_top:
         if multitask or not for_hmdb:
