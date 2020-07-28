@@ -116,7 +116,10 @@ if __name__ == '__main__':
     #fit_model(model, train_data, test_data, weights_dir, input_shape)
     
     # train CNN using dmd as input
-    dmd_weights_dir = os.path.join(weights_dir, 'mrdmd_cnn_compressed.h5')
+    if hybrid:
+        dmd_weights_dir = os.path.join(weights_dir,'hybrid_cnn_compressed.h5')
+    else:
+        dmd_weights_dir = os.path.join(weights_dir, 'mrdmd_cnn_compressed.h5')
     of_weights_dir = os.path.join(weights_dir, 'temporal_cnn_42.h5')
     video_dir = os.path.join(data_dir, 'MrDMD_data')
     input_shape = (216,216,sequence_length-window_size+1)
