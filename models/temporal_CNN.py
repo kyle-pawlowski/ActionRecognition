@@ -60,7 +60,7 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
         ucf_fc6.trainable = not for_hmdb
         ucf = ucf_fc6(ucf)
         if is_training:
-            ucf = Dropout(0.75)(ucf)
+            ucf = Dropout(0.9)(ucf)
         
     if multitask or for_hmdb:
         hmdb = Flatten()(x)
@@ -75,7 +75,7 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
         ucf_fc7.trainable = not for_hmdb
         ucf = ucf_fc7(ucf)
         if is_training:   
-            ucf = Dropout(0.75)(ucf)
+            ucf = Dropout(0.9)(ucf)
     
     if multitask or for_hmdb:
         hmdb_fc9 = Dense(2048, activation='relu', name='tmp_fc9')
