@@ -32,8 +32,8 @@ def fit_model(model, train_data, test_data, weights_dir, input_shape, dataset='u
             num_classes=101
             
         if optical_flow:
-            train_generator = LockedIterator(sequence_generator(train_data, BatchSize, input_shape,num_classes, secondary_data_list=secondary[0]))
-            test_generator = LockedIterator(sequence_generator(test_data, BatchSize, input_shape, num_classes,secondary_data_list=secondary[1]))
+            train_generator = LockedIterator(sequence_generator(train_data, BatchSize, input_shape,num_classes))
+            test_generator = LockedIterator(sequence_generator(test_data, BatchSize, input_shape, num_classes))
         else:
             train_generator = LockedIterator(image_from_sequence_generator(train_data, BatchSize, (6,)+input_shape, N_CLASSES))
             test_generator = LockedIterator(image_from_sequence_generator(test_data, BatchSize, (6,)+input_shape, N_CLASSES))
