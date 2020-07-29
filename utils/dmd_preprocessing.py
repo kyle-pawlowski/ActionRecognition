@@ -14,7 +14,7 @@ def dmd_prep(src_dir, dest_dir, window, svd_rank, overwrite=False):
     # create dest directory
     if os.path.exists(dest_dir):
         if overwrite:
-            shutil.rmtree(dest_dir)
+            shutil.rmtree(dest_dir, ignore_errors=True)
         else:
             raise IOError(dest_dir + ' already exists')
     os.mkdir(dest_dir)
