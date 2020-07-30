@@ -86,7 +86,7 @@ if __name__ == '__main__':
     window_size = 8
     sequence_length = 16
     multitasking=False
-    hybrid = True
+    hybrid = False
     if len(sys.argv) > 1:
         dataset = sys.argv[1]
         if len(sys.argv) > 2:
