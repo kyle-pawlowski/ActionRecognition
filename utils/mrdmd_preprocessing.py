@@ -116,6 +116,8 @@ def _compute_dmd(frames, hybrid=False):
         return np.zeros(frames[1]*frames[2],1)
     if hybrid:
         modes = get_partial_modes(dmd,range(1,6))
+        if modes = None:
+            return np.zeros(frames[1]*frames[2],1)
     else:
         modes = dmd.modes.real
     return modes
