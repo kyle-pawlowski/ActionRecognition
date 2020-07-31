@@ -121,7 +121,11 @@ if __name__ == '__main__':
     else:
         dmd_weights_dir = os.path.join(weights_dir, 'mrdmd_cnn_compressed.h5')
     of_weights_dir = os.path.join(weights_dir, 'temporal_cnn_42.h5')
-    video_dir = os.path.join(data_dir, 'MrDMD_data')
+    
+    if hybrid:
+        video_dir = os.path.join(data_dir, 'HybridDMD_data')
+    else:
+        video_dir = os.path.join(data_dir, 'MrDMD_data')
     input_shape = (216,216,sequence_length-window_size+1)
     train_data, test_data, class_index = get_data_list(list_dir, video_dir)
     model = mrdmd_CNN(input_shape, (N_CLASSES,51), dmd_weights_dir, include_top=True, multitask= multitasking, for_hmdb=('hmdb' in dataset.lower()))
