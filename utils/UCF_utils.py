@@ -27,6 +27,7 @@ def sequence_generator(data_list, batch_size, input_shape, num_classes, secondar
         batch_x = np.ndarray(x_shape)
         batch_y = np.zeros(y_shape)
         for i in range(batch_size):
+            print('data list: ' + str(data_list))
             step = random.randint(1, len(data_list) - 1)  # approach a random-size step to get the next video sample
             index = (index + step) % len(data_list)
             clip_dir, clip_class = data_list[index]
