@@ -130,7 +130,7 @@ def get_partial_modes(dmd, levels):
     modes = None
     for level in levels:
         try:
-            mode = dmd.partial_modes(level)
+            mode = dmd.partial_modes(level).real
         except IndexError:
             print('Invalid Level encountered')
             continue
@@ -147,4 +147,4 @@ if __name__ == '__main__':
     cwd = os.getcwd()
     src_dir = os.path.join(cwd,'data/UCF-Preprocessed-MrDMD')
     dest_dir = os.path.join(cwd,'data/MrDMD_data')
-    mrdmd_prep(src_dir, dest_dir, 8, -1, overwrite=True) 
+    mrdmd_prep(src_dir, dest_dir, 8, -1, overwrite=True,hybrid=True) 
