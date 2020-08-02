@@ -6,6 +6,8 @@ import shutil
 import warnings
 import cv2
 
+from math import log2, floor
+
 def mrdmd_prep(src_dir, dest_dir, window, num_modes, overwrite=False, hybrid=False):
     train_dir = os.path.join(src_dir, 'train')
     test_dir = os.path.join(src_dir, 'test')
@@ -105,17 +107,19 @@ def _stack_dmd(frames, window, num_modes, grey=True, deeper=False, condensed=Tru
     return modes
 
 def _compute_dmd(frames, hybrid=False):
+    window = frames.shape[0]
     if len(frames.shape) == 4:
-        vec_frames = np.reshape(frames, (frames.shape[0], frames.shape[1]*frames.shape[2]*frames.shape[3]))
+        vec_frames = np.reshape(frames, (window, frames.shape[1]*frames.shape[2]*frames.shape[3]))
     else:
-        vec_frames = np.reshape(frames, (frames.shape[0], frames.shape[1]*frames.shape[2]))
-    dmd = MrDMD(svd_rank=0, max_level=3, max_cycles=1)
+        vec_frames = np.reshape(frames, (window, frames.shape[1]*frames.shape[2]))
+    max_level = floor(log2(window))-1
+    dmd = MrDMD(svd_rank=0, max_level=max_level, max_cycles=1)
     try:
         dmd.fit(vec_frames.T)
     except np.linalg.LinAlgError:
         return np.zeros((frames.shape[1]*frames.shape[2],1))
     if hybrid:
-        modes = get_partial_modes(dmd,range(1,6))
+        modes = get_partial_modes(dmd,[0,max_level])
         if modes is None:
             return np.zeros((frames.shape[1]*frames.shape[2],1))
     else:
@@ -126,8 +130,9 @@ def get_partial_modes(dmd, levels):
     modes = None
     for level in levels:
         try:
-            mode = dmd.get_partial_modes(level)
-        except:
+            mode = dmd.partial_modes(level)
+        except IndexError:
+            print('Invalid Level encountered')
             continue
         if modes is None:
             modes = mode
