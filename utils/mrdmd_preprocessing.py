@@ -112,14 +112,14 @@ def _compute_dmd(frames, hybrid=False):
         vec_frames = np.reshape(frames, (window, frames.shape[1]*frames.shape[2]*frames.shape[3]))
     else:
         vec_frames = np.reshape(frames, (window, frames.shape[1]*frames.shape[2]))
-    max_level = floor(log2(window))-1
+    max_level = floor(log2(window))
     dmd = MrDMD(svd_rank=0, max_level=max_level, max_cycles=1)
     try:
         dmd.fit(vec_frames.T)
     except np.linalg.LinAlgError:
         return np.zeros((frames.shape[1]*frames.shape[2],1))
     if hybrid:
-        modes = get_partial_modes(dmd,[0,max_level])
+        modes = get_partial_modes(dmd,[0,max_level-1])
         if modes is None:
             return np.zeros((frames.shape[1]*frames.shape[2],1))
     else:
@@ -134,6 +134,9 @@ def get_partial_modes(dmd, levels):
         except IndexError:
             print('Invalid Level encountered')
             continue
+        mode = np.max(mode,axis=1,keepdims=True)
+        if level > 0 and np.max(abs(mode)) > 0:
+            print('Got a non-zero long-term mode')
         if modes is None:
             modes = mode
         else:
