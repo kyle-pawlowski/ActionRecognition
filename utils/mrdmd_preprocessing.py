@@ -134,6 +134,7 @@ def get_partial_modes(dmd, levels):
         except IndexError:
             print('Invalid Level encountered')
             continue
+        print('mode shape: '+str(mode.shape))
         mode = np.max(mode,axis=1,keepdims=True)
         if level > 0 and np.max(abs(mode)) > 0:
             print('Got a non-zero long-term mode')
