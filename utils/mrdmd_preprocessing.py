@@ -138,7 +138,7 @@ def get_partial_modes(dmd, levels):
         if mode.shape[1] > 0:
             mode = np.max(mode,axis=1,keepdims=True)
         else:
-            mode = np.reshape(mode, (mode.shape[0], 1))
+            mode = np.array([mode])
         if level > 0 and np.max(abs(mode)) > 0:
             print('Got a non-zero long-term mode')
         if modes is None:
