@@ -67,13 +67,14 @@ def process_clip(src_dir, dst_dir, seq_len, img_size, mean=None, normalization=T
         clip_length = len(all_frames)
         if clip_length <= seq_len or all_frames[0].shape[0] < img_size[0] or all_frames[0].shape[1] < img_size[1]:
             print(src_dir, ' has no enough frames')
-            with open(list_dir,'r') as file_list:
-                files = file_list.readlines()
-            with open(list_dir,'w') as file_list:
-                for file in files:
-                    if file[:-1] not in src_dir:
-                        file_list.write(file)
-            return
+            if list_dir != None:
+                with open(list_dir,'r') as file_list:
+                    files = file_list.readlines()
+                with open(list_dir,'w') as file_list:
+                    for file in files:
+                        if file[:-1] not in src_dir:
+                            file_list.write(file)
+                return
         step_size = int(clip_length / (seq_len + 1))
         frame_sequence = []
         # select random first frame index for continuous sequence
