@@ -138,6 +138,7 @@ def get_partial_modes(dmd, levels):
         if mode.shape[1] > 0:
             mode = np.max(mode,axis=1,keepdims=True)
         else:
+            mode = np.reshape(mode, (mode.shape[0],))
             new_mode = np.ndarray((mode.shape[0],1))
             new_mode[:,0] = mode
             mode = new_mode
