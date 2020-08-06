@@ -41,13 +41,13 @@ def temporal_CNN(input_shape, classes, weights_dir, include_top=True, multitask=
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     if is_training:   
-        x = Dropout(0.9)(x)
+        x = Dropout(0.75)(x)
 
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv4')(x)
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     if is_training:
-        x = Dropout(0.9)(x)
+        x = Dropout(0.75)(x)
 
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv5')(x)
     x = BatchNormalization(axis=3)(x)
