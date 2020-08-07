@@ -23,7 +23,7 @@ def vids_to_npy(vids,src_dir,dest_dir):
 if __name__ is '__main__':
     datatype = sys.argv[1]
     weights_name = sys.argv[2]
-    multitasking = sys.argv[3]
+    multitasking = int(sys.argv[3])
     
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
