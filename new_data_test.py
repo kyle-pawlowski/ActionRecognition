@@ -48,7 +48,7 @@ if __name__ is '__main__':
     elif 'of' in datatype.lower():
         model = temporal_CNN((216,216,30), 101, weights_dir, is_trainin=False)
     else:
-        model = dmd_CNN((216,216,14), 101, weights_dir, is_training=False, multitask=multitasking)
+        model = dmd_CNN((216,216,14), (101,51), weights_dir, is_training=False, multitask=multitasking)
     predictions = model.predict(processed, batch_size=4)
     top_cats = np.ndarray((predictions.shape[0], 5))
     for i in range(top_cats.shape[1]):
