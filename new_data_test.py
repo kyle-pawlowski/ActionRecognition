@@ -6,12 +6,13 @@ Created on Sun Aug  2 12:53:38 2020
 """
 
 import os
+import sys
 
 from PIL import Image
 import numpy as np
 
 from utils.UCF_preprocessing import process_clip
-from models.temporal_CNN import dmd_CNN
+from models.temporal_CNN import dmd_CNN, mrdmd_CNN, temporal_CNN
 from utils.dmd_preprocessing import _stack_dmd
 
 def vids_to_npy(vids,src_dir,dest_dir):
@@ -20,11 +21,16 @@ def vids_to_npy(vids,src_dir,dest_dir):
                      horizontal_flip=False,random_crop=False, continuous_seq=True)
         
 if __name__ is '__main__':
+    datatype = sys.argv[1]
+    weights_name = sys.argv[2]
+    
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
     src_dir = os.path.join(data_dir,'Sport_Test')
     dest_dir = os.path.join(data_dir,'Sport_Test_Preprocessed')
     list_dir = os.path.join(data_dir,'ucfTrainTestlist')
+    weights_dir = os.path.join(cwd,'models')
+    weights_dir = os.path.join(weights_dir,weights_name)
     
     vids = ['sports1', 'sports2','sports3','sports4']
     '''#vids = [os.path.join(dest_dir,vid) for vid in vids]
@@ -35,7 +41,13 @@ if __name__ is '__main__':
     vids = [np.load(vid) for vid in vids]
     processed = [_stack_dmd(vid, 3, -1, deeper=False) for vid in vids]
     processed = np.array(processed)
-    model = dmd_CNN((216,216,14), 101, 'models/dmd_testing_21704.h5', is_training=False)
+    
+    if 'mrdmd' in datatype.lower():
+        model = mrdmd_CNN((216,216,9), 101, weights_dir, is_training=False)
+    elif 'of' in datatype.lower():
+        model = temporal_CNN((216,216,30), 101, weights_dir, is_trainin=False)
+    else:
+        model = dmd_CNN((216,216,14), 101, weights_dir, is_training=False)
     predictions = model.predict(processed, batch_size=4)
     top_cats = np.ndarray((predictions.shape[0], 5))
     for i in range(top_cats.shape[1]):
