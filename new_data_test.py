@@ -35,7 +35,7 @@ if __name__ is '__main__':
     vids = [np.load(vid) for vid in vids]
     processed = [_stack_dmd(vid, 3, -1, deeper=False) for vid in vids]
     processed = np.array(processed)
-    model = dmd_CNN((216,216,14), 101, 'models/dmd_testing_.h5', is_training=False)
+    model = dmd_CNN((216,216,14), 101, 'models/dmd_testing_21704.h5', is_training=False)
     predictions = model.predict(processed, batch_size=4)
     top_cats = np.ndarray((predictions.shape[0], 5))
     for i in range(top_cats.shape[1]):
@@ -51,6 +51,12 @@ if __name__ is '__main__':
         for line in fo:
             class_number, class_name = line.split()
             class_index.append(class_name)
+            
+    top_cats_str = np.ndarray(top_cats.shape).astype(np.object)
+    for i in range(top_cats.shape[0]):
+        for j in range(top_cats.shape[1]):
+            top_cats_str[i,j] = class_index[int(top_cats[i,j])-1]
+    print(top_cats_str)
             
     
     
