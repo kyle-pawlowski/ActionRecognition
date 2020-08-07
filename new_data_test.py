@@ -23,6 +23,7 @@ def vids_to_npy(vids,src_dir,dest_dir):
 if __name__ is '__main__':
     datatype = sys.argv[1]
     weights_name = sys.argv[2]
+    multitasking = sys.argv[3]
     
     cwd = os.getcwd()
     data_dir = os.path.join(cwd,'data')
@@ -47,7 +48,7 @@ if __name__ is '__main__':
     elif 'of' in datatype.lower():
         model = temporal_CNN((216,216,30), 101, weights_dir, is_trainin=False)
     else:
-        model = dmd_CNN((216,216,14), 101, weights_dir, is_training=False)
+        model = dmd_CNN((216,216,14), 101, weights_dir, is_training=False, multitasking=multitasking)
     predictions = model.predict(processed, batch_size=4)
     top_cats = np.ndarray((predictions.shape[0], 5))
     for i in range(top_cats.shape[1]):
