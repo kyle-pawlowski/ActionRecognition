@@ -227,13 +227,13 @@ def mrdmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=Fal
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     if is_training:
-        x = Dropout(0)(x)
+        x = Dropout(0.5)(x)
 
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv4')(x)
     x = BatchNormalization(axis=3)(x)
     x = Activation('relu')(x)
     if is_training:
-        x = Dropout(0)(x)
+        x = Dropout(0.5)(x)
 
     x = Convolution2D(512, kernel_size=(3, 3), strides=(1, 1), padding='same', name='tmp_conv5')(x)
     x = BatchNormalization(axis=3)(x)
@@ -253,7 +253,7 @@ def mrdmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=Fal
         hmdb_fc8 = Dense(4096, activation='relu', name='tmp_fc8')
         hmdb_fc8.trainable = for_hmdb
         hmdb = hmdb_fc8(hmdb)
-        hmdb = Dropout(0.5)(hmdb)
+        hmdb = Dropout(0.75)(hmdb)
     
     if multitask or not for_hmdb:
         ucf_fc7 = Dense(2048, activation='relu', name='tmp_fc7')
@@ -266,7 +266,7 @@ def mrdmd_CNN(input_shape, classes, weights_dir, include_top=True, multitask=Fal
         hmdb_fc9 = Dense(2048, activation='relu', name='tmp_fc9')
         hmdb_fc9.trainable = for_hmdb
         hmdb = hmdb_fc9(hmdb)
-        hmdb = Dropout(0.5)(hmdb)
+        hmdb = Dropout(0.75)(hmdb)
 
     if include_top:
         if multitask or not for_hmdb:
