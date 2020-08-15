@@ -106,7 +106,7 @@ if __name__ == '__main__':
         list_dir = os.path.join(data_dir,'ucfTrainTestlist')
     weights_dir = os.path.join(cwd,'models')
     weights_dir = os.path.join(weights_dir, weights_name)
-    if 'mrdmd' in datatype.lower():
+    if 'mrdmd' in datatype.lower() or 'hybrid' in datatype.lower():
         video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
         input_shape= (216, 216, sequence_length-window_size+1)
         model = mrdmd_CNN(input_shape, (N_CLASSES, 51), weights_dir, include_top=True, is_training=False, multitask=multitask,for_hmdb=('hmdb' in dataset.lower()))
@@ -114,10 +114,6 @@ if __name__ == '__main__':
         video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
         input_shape = (216,216,2*sequence_length-2)
         model = temporal_CNN(input_shape,(N_CLASSES, 51),weights_dir,include_top=True, is_training=False, multitask=multitask, for_hmdb=('hmdb' in dataset.lower()))
-    elif 'hybrid' in datatype.lower():
-        video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
-        input_shape= (216, 216, sequence_length-window_size+1)
-        model = mrdmd_CNN(input_shape, (N_CLASSES, 51), weights_dir, include_top=True, is_training=False, multitask=multitask,for_hmdb=('hmdb' in dataset.lower()), hybrid=True)
     else:
         video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
         input_shape = (216,216,sequence_length-window_size+1)
