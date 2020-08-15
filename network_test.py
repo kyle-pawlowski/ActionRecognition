@@ -44,7 +44,9 @@ def pipeline_test(model, test_data, data_type, class_index, num_classes=101, win
         datax = np.load(example)
         if 'mrdmd' in data_type.lower():
             processed = _stack_mrdmd(datax, window_size, -1, deeper=False, condensed=True)
-        if 'dmd' in data_type.lower():
+        elif 'hybrid' in data_type.lower():
+            processed = _stack_mrdmd(datax, window_size, -1, deeper=False, condensed=True,hybrid=True)
+        elif 'dmd' in data_type.lower():
             processed = _stack_dmd(datax,window_size,-1,deeper=False,condensed=True)
         else:
             processed = stack_optical_flow(datax)
@@ -112,6 +114,10 @@ if __name__ == '__main__':
         video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
         input_shape = (216,216,2*sequence_length-2)
         model = temporal_CNN(input_shape,(N_CLASSES, 51),weights_dir,include_top=True, is_training=False, multitask=multitask, for_hmdb=('hmdb' in dataset.lower()))
+    elif 'hybrid' in datatype.lower():
+        video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
+        input_shape= (216, 216, sequence_length-window_size+1)
+        model = mrdmd_CNN(input_shape, (N_CLASSES, 51), weights_dir, include_top=True, is_training=False, multitask=multitask,for_hmdb=('hmdb' in dataset.lower()), hybrid=True)
     else:
         video_dir = os.path.join(data_dir,'UCF-DMD-Testing')
         input_shape = (216,216,sequence_length-window_size+1)
